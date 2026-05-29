@@ -1,0 +1,9 @@
+from app.core.database import engine
+
+try:
+    connection = engine.connect()
+    print("LAMSIA Backend : lamsia_db connection successful.")
+    connection.close()
+except Exception as e:
+    print("Database connection failed:")
+    print(e)
