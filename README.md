@@ -90,6 +90,14 @@
 
     http://127.0.0.1:8000
 
+Opsional:
+
+9. Untuk keluar dari venv ptyhon, kamu bisa menjalankan,
+
+    (venv) PS C:\LAMSIA\LAMSIA-BACKEND> deactivate
+
+
+
 =============================================================================================
 
 **<div align=center>Migration Database</div>**
