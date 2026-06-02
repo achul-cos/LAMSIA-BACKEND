@@ -20,30 +20,32 @@ class MigrationGenerator:
         file_path = (Path("app/migrations")/file_name)
         template = (
             f'''
-            # ------------------------------------------------------------------
-            # {file_name}
-            # ------------------------------------------------------------------
-            # {file_name} yaitu kode yang mendefinisikan tabel migration dari
-            # model {self.resource.model_file}. Kode ditulis dengan format ORM
-            # pewarisan dari class Base, yang terdiri dari nama column, tipe data,
-            # dan atribut lainya dari column tersebut
-            # ------------------------------------------------------------------
+# ------------------------------------------------------------------
+# {file_name}
+# ------------------------------------------------------------------
+# {file_name} yaitu kode yang mendefinisikan tabel migration dari
+# model {self.resource.model_file}. Kode ditulis dengan format ORM
+# pewarisan dari class Base, yang terdiri dari nama column, tipe data,
+# dan atribut lainya dari column tersebut
+# ------------------------------------------------------------------
 
-            """
-            fungsi up(), yaitu fungsi yang diprogram untuk mendefinisikan column,
-            tipe data, atribut dan lainya terkait column tersebut. Kode ditulis
-            mengikuti rancangan dari model {self.resource.model_file} seharusnya.
-            """
-            def up():
-                pass
-                
-            """
-            fungsi down(), yaitu fungsi yang diprogram untuk menghapus column,
-            tipe data, atribut dan lainya terkait column tersebut secara
-            spesifik atau kesuluruhan tabel.
-            """
-            def down():
-                pass
-            '''
+"""
+fungsi up(), yaitu fungsi yang diprogram untuk mendefinisikan column,
+tipe data, atribut dan lainya terkait column tersebut. Kode ditulis
+mengikuti rancangan dari model {self.resource.model_file} seharusnya.
+"""
+def up():
+    pass
+    
+"""
+fungsi down(), yaitu fungsi yang diprogram untuk menghapus column,
+tipe data, atribut dan lainya terkait column tersebut secara
+spesifik atau kesuluruhan tabel.
+"""
+def down():
+    pass
+        '''
             )
-        
+        with open(file_path, "w") as file:
+            file.write(template)
+        return file_name
