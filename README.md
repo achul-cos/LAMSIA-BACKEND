@@ -80,11 +80,15 @@
 
 6. Install beberapa package dengan menjalankan perintah CLI
 
-    pip install fastapi uvicorn sqlalchemy pymysql python-dotenv
+    > pip install fastapi uvicorn sqlalchemy pymysql python-dotenv inflect
+
+6a. Atau alternatif paling singkat, dapat menjalankan perintah CLI berikut,
+
+    > pip install -r requirements.txt
 
 7. Lalu jalankan server FastAPI
 
-    uvicorn app.main:app --reload
+    > uvicorn app.main:app --reload
 
 8. Server dianggap berjalan jika kamu dapat mengakses link server yang keluar di terminal, contohnya:
 
