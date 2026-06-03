@@ -11,7 +11,7 @@ class ResourceName:
         return self.name
     
     @property
-    def plural(self):
+    def table_name(self):
         return engine.plural(self.name)
     
     @property
@@ -36,4 +36,4 @@ class ResourceName:
     
     @property
     def migration_file(self):
-        return f"create_{self.plural}_table"
+        return f"create_{self.table_name}_table"

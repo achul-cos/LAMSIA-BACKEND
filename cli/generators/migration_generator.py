@@ -1,13 +1,13 @@
-from pathlib import Path
-
+from cli.config.config import Config
 from cli.utils.resource_name import ResourceName
+from cli.generators.base_generator import BaseGenerator
 
-class MigrationGenerator:
+class MigrationGenerator(BaseGenerator):
     def __init__(self, resource_name):
         self.resource = ResourceName(resource_name)
 
     def get_next_number(self):
-        migration_path = Path("app/migrations")
+        migration_path = Config.MIGRATION_PATH
         migration_files = list(
             migration_path.glob("*.py")
         )
@@ -17,9 +17,8 @@ class MigrationGenerator:
         migration_number = str(self.get_next_number()).zfill(3)
         migration_name = self.resource.migration_file
         file_name = f"{migration_number}_{migration_name}.py"
-        file_path = (Path("app/migrations")/file_name)
-        template = (
-            f'''
+        file_path = Config.MIGRATION_PATH / file_name
+        template = (f'''
 # ------------------------------------------------------------------
 # {file_name}
 # ------------------------------------------------------------------
@@ -46,6 +45,10 @@ def down():
     pass
         '''
             )
-        with open(file_path, "w") as file:
-            file.write(template)
-        return file_name
+        
+        writer = self.write_file(file_path, template)
+
+        if writer == False:
+            return False
+        else:
+            return [file_name, file_path]
