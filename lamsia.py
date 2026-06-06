@@ -14,7 +14,10 @@ class Lamsia:
             sys.exit()
 
         if len(sys.argv) > 2:
-            self.resource = sys.argv[2]
+            if sys.argv[2].startswith("--") or sys.argv[2].startswith("-"):
+                self.resource = ""
+            else:
+                self.resource = sys.argv[2]
         else:
             self.resource = ""
 
@@ -87,14 +90,12 @@ class Lamsia:
                     print("You didn't input any [name_schema]")  
                     sys.exit()
 
-                schema_command = MakeSchemaCommand(self.resource)
-                schema_command.handle()
-
-                # if self.has_flag("--auto"):
-                    # For Testing Purpose
-                    # print("Auto feuture is okey"
-
-                    # schema_command.handleAuto()                           
+                if self.has_flag("--auto"):
+                    schema_command = MakeSchemaCommand(self.resource)
+                    schema_command.handleAuto() 
+                else:
+                    schema_command = MakeSchemaCommand(self.resource)
+                    schema_command.handle()                          
 
             case "make:repository":
                 print(f"This repository command for {self.resource}")

@@ -14,4 +14,15 @@ class MakeSchemaCommand:
             return
         else:
             print(f"Schema Successful Created : {file[0]}")
-            print(f"{file[0]} Path : {file[1]}")        
+            print(f"{file[0]} Path : {file[1]}")
+
+    def handleAuto(self):
+        generator = SchemaGenerator(self.resource_name)
+
+        file = generator.generateAuto()
+
+        if file is False:
+            self.handle()
+        else:
+            print(f"Schema Successful Created : {file[0]}")
+            print(f"{file[0]} Path : {file[1]}")
