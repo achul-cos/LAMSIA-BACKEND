@@ -1,6 +1,7 @@
 from cli.commands.make_migration_command import MakeMigrationCommand
 from cli.commands.make_model_command import MakeModalCommand
 from cli.commands.make_schema_command import MakeSchemaCommand
+from app.migrations.migration_manager import run_migrations
 
 import sys
 
@@ -105,6 +106,18 @@ class Lamsia:
 
             case "make:resource":
                 print(f"This migration, model, schema, repository, and route command for {self.resource}")
+
+            case "migrate":
+
+                """
+                Migrate Command Schematic:
+
+                > python lamsia.py migrate --[flags]
+
+                this is version 0.1
+                """
+
+                run_migrations()
 
             case "help":
                 print(

@@ -114,7 +114,7 @@
 6. Install beberapa package dengan menjalankan perintah CLI
 
     ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> pip install fastapi uvicorn sqlalchemy pymysql python-dotenv inflect
+    PS C:\LAMSIA\LAMSIA-BACKEND> pip install fastapi uvicorn sqlalchemy pymysql python-dotenv inflect faker
     ```
 
 6a. Atau alternatif paling singkat, dapat menjalankan perintah CLI berikut,

@@ -27,6 +27,6 @@ class Config:
     )
 
     MIGRATION_PATH = (
-        APP_PATH / "migrations/tables"
+        APP_PATH / "migrations/versions"
     )
 

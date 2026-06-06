@@ -28,20 +28,24 @@ class MigrationGenerator(BaseGenerator):
 # dan atribut lainya dari column tersebut
 # ------------------------------------------------------------------
 
-"""
-fungsi up(), yaitu fungsi yang diprogram untuk mendefinisikan column,
-tipe data, atribut dan lainya terkait column tersebut. Kode ditulis
-mengikuti rancangan dari model {self.resource.model_file} seharusnya.
-"""
-def up():
+from sqlalchemy import Column, Integer, String, Table
+from app.core.database import Base
+
+def upgrade(engine):
+    """
+    fungsi upgrade(), yaitu fungsi yang diprogram untuk mendefinisikan column,
+    tipe data, atribut dan lainya terkait column tersebut. Kode ditulis
+    mengikuti rancangan dari model {self.resource.model_file} seharusnya.
+    """
     pass
     
-"""
-fungsi down(), yaitu fungsi yang diprogram untuk menghapus column,
-tipe data, atribut dan lainya terkait column tersebut secara
-spesifik atau kesuluruhan tabel.
-"""
-def down():
+
+def downgrade(engine):
+    """
+    fungsi down(), yaitu fungsi yang diprogram untuk menghapus column,
+    tipe data, atribut dan lainya terkait column tersebut secara
+    spesifik atau kesuluruhan tabel.
+    """
     pass
         '''
             )
