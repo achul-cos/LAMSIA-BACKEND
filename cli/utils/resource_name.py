@@ -37,3 +37,11 @@ class ResourceName:
     @property
     def migration_file(self):
         return f"create_{self.table_name}_table"
+    
+    @property
+    def seeder_file(self):
+        return f"{self.singular}_seeder"
+    
+    @property
+    def seeder_class(self):
+        return f"{self.class_name}Seeder"

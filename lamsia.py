@@ -1,7 +1,9 @@
 from cli.commands.make_migration_command import MakeMigrationCommand
 from cli.commands.make_model_command import MakeModalCommand
 from cli.commands.make_schema_command import MakeSchemaCommand
+from cli.utils.resource_name import ResourceName
 from app.migrations.migration_manager import handle_migrations, rollback_last, reset_migrations, status
+from app.seeders.seeder_runner import run_seeder, run_seeders
 
 import sys
 
@@ -166,6 +168,19 @@ class Lamsia:
                 """
 
                 rollback_last()
+
+            case "seed":
+                """
+                Seeder Command Schematic:
+
+                > python lamsia.py seed [seeder_name] --flag[]
+                """
+
+                if self.resource == "":
+                    run_seeders()
+
+                if self.resource != "":
+                    run_seeder(self.resource)
 
             case "help":
                 print(
