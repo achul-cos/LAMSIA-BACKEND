@@ -34,7 +34,7 @@ DATABASE_URL = (
 # Mendefinisikan objek (mesin) database mysql menjadi sebuah objek yang dapat diakses dan dijalankan oleh kode dan sistem
 engine = create_engine(
     DATABASE_URL,
-    echo=True,
+    # echo=True,
 )
 
 # Mendefinisikan objek sessionmaker sebagai penghubung atau jalur komunikasi menuju engine (database), yang dapat diakses oleh kode pada sistem

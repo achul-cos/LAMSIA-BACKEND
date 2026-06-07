@@ -6,8 +6,10 @@
 # memiliki atribut apa saja. 
 # ------------------------------------------------------------------
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from app.core.database import Base
+from datetime import datetime
+from app.core.time import now
 
 # Objek User memiliki atribut id, username, telephone dan password
 class User(Base):
@@ -16,3 +18,5 @@ class User(Base):
     username = Column(String(100), nullable=False)
     telephone = Column(String(100), nullable=False)
     password = Column(String(255), nullable=False, info={"secret"})
+    created_at = Column(DateTime, default=now())
+    updated_at = Column(DateTime, default=now())

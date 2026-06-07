@@ -1,7 +1,7 @@
 from cli.commands.make_migration_command import MakeMigrationCommand
 from cli.commands.make_model_command import MakeModalCommand
 from cli.commands.make_schema_command import MakeSchemaCommand
-from app.migrations.migration_manager import run_migrations
+from app.migrations.migration_manager import handle_migrations, rollback_last, reset_migrations, status
 
 import sys
 
@@ -117,7 +117,55 @@ class Lamsia:
                 this is version 0.1
                 """
 
-                run_migrations()
+                handle_migrations()
+
+            case "migrate:reset":
+                """
+                Migration Reset Command Schematic:
+
+                > python lamsia.py migrate:reset --[flags]
+
+                this is version 0.1
+                """
+
+                reset_migrations()
+
+            case "migrate:refresh":
+                """
+                Migration Refresh Command Schematic:
+
+                > python lamsia.py migrate:refresh --[flags]
+
+                this is version 0.1
+                """
+
+                print("System Reset Migration")
+                reset_migrations()
+
+                print("System Migrating Migration")
+                handle_migrations()
+
+            case "migrate:status":
+                """
+                Migration Status Command Schematic:
+
+                > python lamsia.py migrate:status --[flags]
+
+                this is version 0.1
+                """
+
+                status()
+
+            case "rollback":
+                """
+                Rollback Command Schematic:
+
+                > python lamsia.py rollback --[flags]
+
+                this is version 0.1
+                """
+
+                rollback_last()
 
             case "help":
                 print(

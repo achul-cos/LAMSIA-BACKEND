@@ -1,45 +1,9 @@
-import os
-from datetime import datetime
-from cli.config.config import Config
-from cli.utils.resource_name import ResourceName
-from cli.generators.base_generator import BaseGenerator
 
-class MigrationGenerator(BaseGenerator):
-    def __init__(self, resource_name):
-        self.resource = ResourceName(resource_name)
-
-    def get_latest_number(self):
-        migration_path = Config.MIGRATION_PATH
-
-        files = os.listdir(migration_path)
-
-        migration_versios_numbers = []
-
-        for file in files:
-            if file.endswith('.py') and file[0:3].isdigit():
-                migration_versios_numbers.append(int(file[0:3]))
-
-        if not migration_versios_numbers:
-            return 0
-        
-        return max(migration_versios_numbers)
-    
-    def generate(self):
-        next_migration_version_number = self.get_latest_number() + 1
-
-        migration_name = self.resource.migration_file
-
-        file_name = f"{next_migration_version_number:03d}_{migration_name}.py"
-
-        file_path = Config.MIGRATION_PATH / file_name
-
-        template = (
-f'''
 # ------------------------------------------------------------------
-# {file_name}
+# 002_create_users_table.py
 # ------------------------------------------------------------------
-# {file_name} yaitu kode yang mendefinisikan tabel migration dari
-# model {self.resource.model_file}. Kode ditulis dengan format ORM
+# 002_create_users_table.py yaitu kode yang mendefinisikan tabel migration dari
+# model user_model.py. Kode ditulis dengan format ORM
 # pewarisan dari class Base, yang terdiri dari nama column, tipe data,
 # dan atribut lainya dari column tersebut
 # ------------------------------------------------------------------
@@ -55,9 +19,9 @@ def upgrade(engine):
     engine (function) : fungsi creta_engine(database_url) dari modul SQLalchemy
 
     Function Schematic:
-    Schema("<table_name>"){"\\"}
-        .id(){"\\"}
-        .<column_type_data>("<column_name>"){"\\"}
+    Schema("<table_name>")\
+        .id()\
+        .<column_type_data>("<column_name>")\
         ...
     .build(engine)
 
@@ -66,14 +30,15 @@ def upgrade(engine):
     <column_name> (string)          : Nama column akan dibuat
 
     Example:
-    Schema("test_table"){"\\"}
-        .id(){"\\"}
-        .int("atribute_1"){"\\"}
-        .string("atribute_2"){"\\"}
+    Schema("test_table")\
+        .id()\
+        .int("atribute_1")\
+        .string("atribute_2")\
     .build(engine)   
     """
-    Schema("{self.resource.table_name}"){"\\"}
-        .id(){"\\"}
+    Schema("users")\
+        .int("age")\
+        .text("bio")\
     .build(engine)
 
 def downgrade(engine):
@@ -99,9 +64,9 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    Schema("{self.resource.table_name}").deleteColumns(engine, [
-        #'atrribute1',
-        #'atribute2',
+    Schema("users").deleteColumns(engine, [
+        'age',
+        'bio'
     ])
 
     """
@@ -119,12 +84,4 @@ def downgrade(engine):
     Schema("test_table").deleteTable()
     """
 
-    # Schema("{self.resource.table_name}").deleteTable()'''
-            )
-        
-        writer = self.write_file(file_path, template)
-
-        if writer == False:
-            return False
-        else:
-            return [file_name, file_path]
+    # Schema("users").deleteTable()

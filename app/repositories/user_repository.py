@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.models.user_model import User
 from app.schemas.user_schema import UserCreate
 from app.helper.query_parser import QueryParser
+from app.core.time import now
 
 class UserRepository:
     """
@@ -51,6 +52,7 @@ class UserRepository:
         user.username = user_data.username
         user.telephone = user_data.telephone
         user.password = user_data.password
+        user.updated_at = now()
 
         db.commit()
         db.refresh(user)
@@ -69,6 +71,8 @@ class UserRepository:
                 continue
 
             setattr(user, key, value)
+
+        user.updated_at = now()
 
         db.commit()
         db.refresh(user)
