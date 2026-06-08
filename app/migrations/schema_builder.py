@@ -98,10 +98,10 @@ class Schema:
     # Timestamp
     def timestamps(self):
         self.columns.append(
-            Column("created_at", DateTime, default=datetime.day)
+            Column("created_at", DateTime, default=now())
         )
         self.columns.append(
-            Column("updated_at", DateTime, default=datetime.day)
+            Column("updated_at", DateTime, default=now())
         )
         return self
 

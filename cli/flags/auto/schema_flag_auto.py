@@ -35,6 +35,7 @@ class SchemaFlagAuto:
             return False
 
         for column in model_columns:
+
             fields.append(
                 {
                     "name": column.name,
@@ -73,19 +74,21 @@ class SchemaFlagAuto:
             "String": "str",
             "Boolean": "bool",
             "Float": "float",
+            "Enum": "Enum",
+            "DateTime": "datetime"
         }
 
         return mapping.get(sqlalchemy_type, "str")
     
     def generate_schema_fields(self, fields):
-        schema_fields = []
-
         """
         Jika merujuk pada list self.classify_fields(), lisy akan berisi tiga anggota,
         self.classify_fields()[0] = Kelompok key_data,
         self.classify_fields()[1] = Kelompok body_data,
         self.classify_fields()[2] = Kelompok secret_data,
         """
+        schema_fields = []
+
         for dataGroup in fields:
             data_field = []
             for data in dataGroup:
@@ -108,20 +111,16 @@ class SchemaFlagAuto:
         schema_field = ""
 
         for groupList in list_schema_fields:
+            
             for list in groupList:
+
+                if list.startswith("created_at:") or list.startswith("updated_at"):
+                    continue
+
                 schema_field += f"""
     {str(list)}"""
 
         return schema_field
-
-        # schema = (
-        #     f"class {self.resource.class_name}Create(BaseModel):\n"
-        #     +
-        #     schema_field
-        # )
-
-        # return schema
-
 
     def generate_response_schema(self):
         if self.classify_fields() is False:
@@ -136,19 +135,8 @@ class SchemaFlagAuto:
 
         for groupList in list_schema_fields:
             for list in groupList:
+
                 schema_field += f"""
     {str(list)}"""
 
         return schema_field
-
-    #     schema = (
-    #         f"class {self.resource.class_name}Response(BaseModel):\n"
-    #         +
-    #         schema_field
-    #         +
-    #         f'''
-    # class Config:
-    #     from_attributes = True'''
-    #     )
-
-    #     return schema        

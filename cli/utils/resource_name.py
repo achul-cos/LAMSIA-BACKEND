@@ -45,3 +45,11 @@ class ResourceName:
     @property
     def seeder_class(self):
         return f"{self.class_name}Seeder"
+    
+    @property
+    def factory_file(self):
+        return f"{self.singular}_factory"
+    
+    @property
+    def factory_class(self):
+        return f"{self.class_name}Factory"

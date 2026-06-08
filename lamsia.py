@@ -1,9 +1,10 @@
 from cli.commands.make_migration_command import MakeMigrationCommand
-from cli.commands.make_model_command import MakeModalCommand
+from cli.commands.make_model_command import MakeModelCommand
 from cli.commands.make_schema_command import MakeSchemaCommand
 from cli.utils.resource_name import ResourceName
 from app.migrations.migration_manager import handle_migrations, rollback_last, reset_migrations, status
 from app.seeders.seeder_runner import run_seeder, run_seeders
+from app.factories.factory_seeder import FactorySeeder
 
 import sys
 
@@ -52,8 +53,12 @@ class Lamsia:
                     print("You didn't input any [name_migration]")
                     sys.exit()
 
-                migration_command = MakeMigrationCommand(self.resource)
-                migration_command.handle()
+                if self.has_flag("--auto"):
+                    migration_command = MakeMigrationCommand(self.resource)
+                    migration_command.handleAuto() 
+                else:
+                    migration_command = MakeMigrationCommand(self.resource)
+                    migration_command.handle()
 
             case "make:model":
                 # For Testing Purpose
@@ -72,7 +77,7 @@ class Lamsia:
                     print("You didn't input any [name_model]")  
                     sys.exit()
 
-                model_command = MakeModalCommand(self.resource)
+                model_command = MakeModelCommand(self.resource)
                 model_command.handle()                  
 
             case "make:schema":
@@ -182,6 +187,88 @@ class Lamsia:
                 if self.resource != "":
                     run_seeder(self.resource)
 
+            case "factory":
+                """
+                Factory Command Schematic:
+
+                > python lamsia.py factory [factory_name] --[flags]
+
+                [flags]:
+
+                --count=[quantity_data] : Berapa jumlah factory yang ingin dibuat
+
+                this is version 0.1
+                """
+                if any(flag.startswith("--count") for flag in self.flags):
+
+                    for flag in self.flags:
+
+                        if flag.startswith("--count="):
+                            count = (flag.split("="))[1]
+
+                            try:
+                                count = int(count)
+
+                                if self.resource == "":
+                                    FactorySeeder(count=count).run()
+
+                                if self.resource != "":
+                                    FactorySeeder(self.resource, count=count).run_factory()                            
+
+                            except:
+                                print(f"Spatial Error : Count flag value is not valid. {count} is not number")
+                                print(f"Error Handler : Still Excuted the command,")
+
+                                if self.resource == "":
+                                    print(f"> python lamsia.py factory")
+                                    FactorySeeder().run()
+                                    break
+
+                                if self.resource != "":
+                                    print(f"> python lamsia.py factory {self.resource}")
+                                    FactorySeeder(factory_name=self.resource).run_factory()
+                                    break
+
+                        else:
+                            continue
+
+                    sys.exit()
+
+                else:
+                    if self.resource == "":
+                        FactorySeeder().run()
+
+                    if self.resource != "":
+                        FactorySeeder(factory_name=self.resource).run_factory()   
+
+                    sys.exit()
+
+            case "make:resource":
+                """
+                Resource Generate Command Schematic:
+
+                > py lamsia.py make:resource [resource_name] --[flags]
+
+                this is version 0.1
+                """
+                
+                if self.resource == "":
+                    print(f"Error : Resource Command Scematic Invalid.")
+                    print(f"python lamsia.py make:resource [resouce_name]")
+                    print("You didn't input any [resouce_name]")  
+                    sys.exit()
+
+                # Make Model
+                model_command = MakeModalCommand(self.resource)
+                model_command.handle() 
+
+                # Make Schema
+                schema_command = MakeSchemaCommand(self.resource)
+                schema_command.handle()
+
+                # Make Repository
+                                                  
+
             case "help":
                 print(
                     f"""
@@ -210,7 +297,6 @@ Command :
             case _:
                 print("Error : Invalid Command. Want to see help? Use: \n")
                 print("python lamsia.py help")
-
 
 def main():
     

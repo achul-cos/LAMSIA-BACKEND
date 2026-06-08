@@ -1,19 +1,19 @@
 # ------------------------------------------------------------------
-# user_schema.py
+# pengasuh_schema.py
 # ------------------------------------------------------------------
-# Kode user_schema.py berfungsi untuk mengatur bagaimana model
-# User dibuat (CREATE) serta melakukan validasi
-# terhadap data yang digunakan untuk membuat objek User.
-# Serta bagaimana objek User ditampilkan datanya (SHOW)
+# Kode pengasuh_schema.py berfungsi untuk mengatur bagaimana model
+# Pengasuh dibuat (CREATE) serta melakukan validasi
+# terhadap data yang digunakan untuk membuat objek Pengasuh.
+# Serta bagaimana objek Pengasuh ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
 
-class UserCreate(BaseModel):
+class PengasuhCreate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin membuat User yang baru.
+    Setiap ingin membuat Pengasuh yang baru.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -31,14 +31,17 @@ class UserCreate(BaseModel):
     password: str
     """
     
-    username: str
+    name: str
     telephone: str
+    email: str
+    address: str
+    family_status: Enum
     password: str
 
-class UserResponse(BaseModel):
+class PengasuhResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
-    ingin melihat User.
+    ingin melihat Pengasuh.
 
     Note:
     Penting untuk tidak menampikan data yang bersifat rahasia,
@@ -61,10 +64,13 @@ class UserResponse(BaseModel):
     """
     
     id: int
-    username: str
+    name: str
     telephone: str
-    created_at: str
-    updated_at: str
+    email: str
+    address: str
+    family_status: Enum
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attribute = True

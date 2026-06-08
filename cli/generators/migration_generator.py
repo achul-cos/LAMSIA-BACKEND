@@ -3,10 +3,13 @@ from datetime import datetime
 from cli.config.config import Config
 from cli.utils.resource_name import ResourceName
 from cli.generators.base_generator import BaseGenerator
+from cli.template.migration_template import MigrationTemplate
 
 class MigrationGenerator(BaseGenerator):
-    def __init__(self, resource_name):
+    def __init__(self, resource_name, migration_fields:str = ""):
+        self.resource_name = resource_name
         self.resource = ResourceName(resource_name)
+        self.migration_fields = migration_fields
 
     def get_latest_number(self):
         migration_path = Config.MIGRATION_PATH
@@ -29,98 +32,17 @@ class MigrationGenerator(BaseGenerator):
 
         migration_name = self.resource.migration_file
 
-        file_name = f"{next_migration_version_number:03d}_{migration_name}.py"
+        migration_number = f"{next_migration_version_number:03d}"
+
+        file_name = f"{migration_number}_{migration_name}.py"
 
         file_path = Config.MIGRATION_PATH / file_name
 
-        template = (
-f'''
-# ------------------------------------------------------------------
-# {file_name}
-# ------------------------------------------------------------------
-# {file_name} yaitu kode yang mendefinisikan tabel migration dari
-# model {self.resource.model_file}. Kode ditulis dengan format ORM
-# pewarisan dari class Base, yang terdiri dari nama column, tipe data,
-# dan atribut lainya dari column tersebut
-# ------------------------------------------------------------------
+        if self.migration_fields == "":
+            template = MigrationTemplate(self.resource_name, migration_number).build()
 
-from app.migrations.schema_builder import Schema
-
-def upgrade(engine):
-    """
-    Membuat tabel baru pada database atau jika tabelnya sudah ada,
-    menambahkan column-column sesuai yang program pada fungsi ini.
-
-    Parameters:
-    engine (function) : fungsi creta_engine(database_url) dari modul SQLalchemy
-
-    Function Schematic:
-    Schema("<table_name>"){"\\"}
-        .id(){"\\"}
-        .<column_type_data>("<column_name>"){"\\"}
-        ...
-    .build(engine)
-
-    <table_name> (string)           : Nama table
-    <column_type_data> (function)   : Tipe data dari column akan dibuat
-    <column_name> (string)          : Nama column akan dibuat
-
-    Example:
-    Schema("test_table"){"\\"}
-        .id(){"\\"}
-        .int("atribute_1"){"\\"}
-        .string("atribute_2"){"\\"}
-    .build(engine)   
-    """
-    Schema("{self.resource.table_name}"){"\\"}
-        .id(){"\\"}
-    .build(engine)
-
-def downgrade(engine):
-    """
-    (opsi 1) Menghapus column-column pada table database yang telah ada,
-
-    Parameters:
-    engine (variabel) : fungsi creata_engine(database_url) dari modul SQLalchemy
-
-    Function Schematic:
-    Schema("<table_name>").deleteColumns(engine, [
-        '<table_column_1>',
-        '<table_column_2>',
-        ..
-    ])
-
-    <table_name> (string)       : Nama tabel
-    <table_column_1> (string)   : Nama column yang akan dihapus
-
-    Example:
-    Schema("test_table").deleteColumns(engine, [
-        'column_1',
-        'column_2',
-    ])
-    """
-    Schema("{self.resource.table_name}").deleteColumns(engine, [
-        #'atrribute1',
-        #'atribute2',
-    ])
-
-    """
-    (opsi 2) Menghapus table dari database
-
-    Parameters:
-    engine (variabel) : fungsi creata_engine(database_url) dari modul SQLalchemy
-
-    Function Schematic:
-    Schema("<table_name>").deleteTable()
-
-    <table_name> (string)   : Nama table yang akan dihapus
-
-    Example:
-    Schema("test_table").deleteTable()
-    """
-
-    # Schema("{self.resource.table_name}").deleteTable()'''
-            )
+        else:
+            template = MigrationTemplate(self.resource_name, migration_number).build(migration_fields=self.migration_fields)
         
         writer = self.write_file(file_path, template)
 

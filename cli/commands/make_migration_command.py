@@ -1,4 +1,5 @@
 from cli.generators.migration_generator import MigrationGenerator
+from cli.flags.auto.migration_flag_auto import MigrationFlagAuto
 
 class MakeMigrationCommand:
 
@@ -15,3 +16,15 @@ class MakeMigrationCommand:
         else:
             print(f"Migration Successful Created : {file[0]}")
             print(f"{file[0]} Path : {file[1]}")
+    
+    def handleAuto(self):
+        generator = MigrationGenerator(self.resource_name, MigrationFlagAuto(self.resource_name).generate_migration_fields())
+
+        file = generator.generate()
+
+        if file == False:
+            return
+        else:
+            print(f"Migration Successful Created : {file[0]}")
+            print(f"Using Auto Generate Feature")
+            print(f"{file[0]} Path : {file[1]}")        
