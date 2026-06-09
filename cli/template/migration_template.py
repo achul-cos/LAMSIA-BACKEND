@@ -93,12 +93,12 @@ def downgrade(engine):
     engine (variabel) : fungsi creata_engine(database_url) dari modul SQLalchemy
 
     Function Schematic:
-    Schema("<table_name>").deleteTable()
+    Schema("<table_name>").deleteTable(engine)
 
     <table_name> (string)   : Nama table yang akan dihapus
 
     Example:
-    Schema("test_table").deleteTable()
+    Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("{self.migration_table_name}").deleteTable()''')
+    # Schema("{self.migration_table_name}").deleteTable(engine)''')

@@ -1,6 +1,8 @@
 from cli.commands.make_migration_command import MakeMigrationCommand
 from cli.commands.make_model_command import MakeModelCommand
 from cli.commands.make_schema_command import MakeSchemaCommand
+from cli.commands.make_repository_command import MakeRepositoryCommand
+from cli.commands.make_route_command import MakeRouteCommand
 from cli.utils.resource_name import ResourceName
 from app.migrations.migration_manager import handle_migrations, rollback_last, reset_migrations, status
 from app.seeders.seeder_runner import run_seeder, run_seeders
@@ -106,13 +108,55 @@ class Lamsia:
                     schema_command.handle()                          
 
             case "make:repository":
-                print(f"This repository command for {self.resource}")
+                """
+                Repository command schematic:
+
+                > python lamsia.py make:repository [name_repository] --[flags]
+
+                this is version 0.1
+                """
+
+                if self.resource == "":
+                    print(f"Error : Schema Command Scematic Invalid.")
+                    print(f"python lamsia.py make:repository [name_repository]")
+                    print("You didn't input any [name_repository]")  
+                    sys.exit()
+
+                if self.has_flag("--auto"):
+                    repository_command = MakeRepositoryCommand(self.resource)
+                    repository_command.handleAuto()
+                    pass
+
+                else:
+                    repository_command = MakeRepositoryCommand(self.resource)
+                    repository_command.handle()
 
             case "make:route":
-                print(f"This route command for {self.resource}")
+                """
+                Route command schematic:
 
-            case "make:resource":
-                print(f"This migration, model, schema, repository, and route command for {self.resource}")
+                > python lamsia.py make:route [name_route] --[flags]
+
+                this is version 0.1
+                """
+
+                if self.resource == "":
+                    print(f"Error : Route Command Scematic Invalid.")
+                    print(f"python lamsia.py make:route [name_route]")
+                    print("You didn't input any [name_route]")  
+                    sys.exit()
+
+                route_command = MakeRouteCommand(self.resource)
+                route_command.handle()
+
+            case "make:service":
+                pass
+
+            case "make:seeder":
+                pass
+
+            case "make:factory":
+                pass
 
             case "migrate":
 
@@ -259,7 +303,7 @@ class Lamsia:
                     sys.exit()
 
                 # Make Model
-                model_command = MakeModalCommand(self.resource)
+                model_command = MakeModelCommand(self.resource)
                 model_command.handle() 
 
                 # Make Schema

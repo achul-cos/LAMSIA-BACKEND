@@ -33,10 +33,35 @@ class PengasuhCreate(BaseModel):
     
     name: str
     telephone: str
+    password: str
+
+class PengasuhUpdate(BaseModel):
+    """
+    Merancang persyaratan data-data yang diberikan pengguna
+    Setiap ingin mengubah suatu Pengasuh.
+
+    Class Schematic:
+    <column_1>: <column_type_data_1>
+    <column_2>: <column_type_data_2>
+    ...
+
+    <column> (variabel)             : nama columnnya
+    <column_type_data> (instance)   : tipe data dari columnnya
+
+    Example:
+    user_name: str
+    email: EmailStr
+    student_number: int
+    birth: datetime
+    password: str
+    """
+    
+    name: str
+    telephone: str
     email: str
     address: str
     family_status: Enum
-    password: str
+    password: str 
 
 class PengasuhResponse(BaseModel):
     """

@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
-# 016_create_pengasuhs_table.py
+# 017_create_sensorresults_table.py
 # ------------------------------------------------------------------
-# Menjalankan migration pada model Pengasuh di database.
+# Menjalankan migration pada model Sensorresult di database.
 # Migration adalah membuat atau menghapus tabel suatu model.
 # Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
 # model, bersamaan dengan tipe data dan meta data lainya
@@ -35,14 +35,10 @@ def upgrade(engine):
         .string("atribute_2")\
     .build(engine)   
     """
-    Schema("pengasuhs")\
+    Schema("sensorresults")\
         .id()\
-        .string('name', length=255, nullable=False)\
-        .string('telephone', length=255, nullable=False, unique=True)\
-        .string('email', length=225, nullable=True)\
-        .string('address', length=255, nullable=True, default='Indonesia, Kota Batam')\
-        .enum('family_status', values=['Anak', 'Kerabat', 'Cucu', 'Lansia', 'Anggota Keluarga Lainya'], nullable=True)\
-        .string('password', length=255, nullable=False)\
+        .int('heart_rate', nullable=False)\
+        .float('blood_saturation', nullable=False)\
         .timestamps()\
     .build(engine)
 
@@ -69,10 +65,10 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    # Schema("pengasuhs").deleteColumns(engine, [
-    #     #'atrribute1',
-    #     #'atribute2',
-    # ])
+    Schema("sensorresults").deleteColumns(engine, [
+        #'atrribute1',
+        #'atribute2',
+    ])
 
     """
     (opsi 2) Menghapus table dari database
@@ -81,12 +77,12 @@ def downgrade(engine):
     engine (variabel) : fungsi creata_engine(database_url) dari modul SQLalchemy
 
     Function Schematic:
-    Schema("<table_name>").deleteTable()
+    Schema("<table_name>").deleteTable(engine)
 
     <table_name> (string)   : Nama table yang akan dihapus
 
     Example:
-    Schema("test_table").deleteTable()
+    Schema("test_table").deleteTable(engine)
     """
 
-    Schema("pengasuhs").deleteTable(engine)
+    # Schema("sensorresults").deleteTable(engine)

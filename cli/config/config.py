@@ -19,7 +19,7 @@ class Config:
     )
 
     REPOSITORY_PATH = (
-        APP_PATH / "repository"
+        APP_PATH / "repositories"
     )
 
     ROUTE_PATH = (

@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------
 from sqlalchemy.orm import Session
 from app.models.user_model import User
-from app.schemas.user_schema import UserCreate
+from app.schemas.user_schema import UserCreate, UserUpdate
 from app.helper.query_parser import QueryParser
 from app.core.time import now
 
@@ -43,7 +43,7 @@ class UserRepository:
         return(db.query(User).filter(User.id == user_id).first())
     
     @staticmethod
-    def update_put(db: Session, user_id: int, user_data: UserCreate):
+    def update_put(db: Session, user_id: int, user_data: UserUpdate):
         user = db.query(User).filter(User.id == user_id).first()
 
         if not user:

@@ -137,6 +137,11 @@ class QueryParser:
             i += 1
 
         # (6) Mengambil anggota pertama yang di dalam anggota pertama yang didalam list STACK
+
+        # For testing purpose
+        # print(stack[0][0])
+
+
         return stack[0][0]
     
     def query_and_parse(query):
@@ -245,7 +250,7 @@ class QueryParser:
         if query is None:
             return None
         
-        OR_GROUP = []        
+        OR_GROUP = []
 
         if isinstance(query, str):
             return QueryParser.operator_parser(model, query)
@@ -258,10 +263,11 @@ class QueryParser:
         if isinstance(query, list):
             
             if len(query) == 1:
-                return QueryParser.query_parse_sqlalchemy_expression(model, query[0])           
+                return QueryParser.query_parse_sqlalchemy_expression(query[0], model)           
 
             for q in query:
-                expr = QueryParser.query_parse_sqlalchemy_expression(model, q)
+
+                expr = QueryParser.query_parse_sqlalchemy_expression(q, model)
 
                 if expr is not None:
                     OR_GROUP.append(expr)

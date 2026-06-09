@@ -9,8 +9,8 @@ class ModelGenerator(BaseGenerator):
     def generate(self):
         file_name = self.resource.model_file
         file_path = Config.MODEL_PATH / file_name
-        template = (f'''
-# ------------------------------------------------------------------
+        template = (
+f'''# ------------------------------------------------------------------
 # {file_name}
 # ------------------------------------------------------------------
 # {file_name} digunakan untuk melakukan pemodelan class atau
@@ -18,8 +18,9 @@ class ModelGenerator(BaseGenerator):
 # objek {self.resource.singular} memiliki atribut apa saja. 
 # ------------------------------------------------------------------
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Enum, DateTime, Float
 from app.core.database import Base
+from app.core.time import now
 
 class {self.resource.class_name}(Base):
     """
@@ -36,6 +37,8 @@ class {self.resource.class_name}(Base):
     """
 
     id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime(), default=now())
+    updated_at = Column(DateTime(), default=now())    
             '''
         )
 

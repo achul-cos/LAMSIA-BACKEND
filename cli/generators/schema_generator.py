@@ -28,13 +28,14 @@ class SchemaGenerator(BaseGenerator, SchemaFlagAuto):
         file_path = Config.SCHEMA_PATH / file_name
 
         create_schema = self.auto.generate_create_schema()
+        update_schema = self.auto.generate_update_schema()
         response_schema = self.auto.generate_response_schema()
 
         if create_schema is False or response_schema is False:
             print(f"System : Don't worry. We still made {file_name} for you.")
             return False
         
-        template = SchemaTemplate(self.resource_name).build(create_schema, response_schema)
+        template = SchemaTemplate(self.resource_name).build(schema_create=create_schema, schema_response=response_schema, schema_update=update_schema)
 
         writer = self.write_file(file_path, template)
 

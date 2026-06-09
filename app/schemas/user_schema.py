@@ -35,6 +35,31 @@ class UserCreate(BaseModel):
     telephone: str
     password: str
 
+class UserUpdate(BaseModel):
+    """
+    Merancang persyaratan data-data yang diberikan pengguna
+    Setiap ingin mengubah suatu user.
+
+    Class Schematic:
+    <column_1>: <column_type_data_1>
+    <column_2>: <column_type_data_2>
+    ...
+
+    <column> (variabel)             : nama columnnya
+    <column_type_data> (instance)   : tipe data dari columnnya
+
+    Example:
+    user_name: str
+    email: EmailStr
+    student_number: int
+    birth: datetime
+    password: str
+    """
+
+    username: str
+    telephone: str
+    password: str    
+
 class UserResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
@@ -63,8 +88,8 @@ class UserResponse(BaseModel):
     id: int
     username: str
     telephone: str
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attribute = True

@@ -47,7 +47,7 @@ class MigrationFlagAuto:
                     "nullable": column.nullable,
                     "default": (((str(column.default)).split("(", maxsplit=1))[-1])[:-1],
                     "unique": column.unique,
-                    "values": column.type
+                    "values": getattr(column.type, "enums", None)
                 }
             )
         
@@ -114,18 +114,31 @@ class MigrationFlagAuto:
                 default = ""
             
             if field["type"] == 'Enum':
-                # enum_values = field["values"]
-                # values = f", values={enum_values}"
-                values = f", values=['enum1', 'enum2']"
-                pass
+                enum_values = field.get("values", [])
+
+                if enum_values:
+                    values = f", values={list(enum_values)}"
+                else:
+                    values = ""
+                    
             else:
                 values = ""
 
             match field["type"]:
 
-                case "Interger":
+                case "Integer":
 
                     migration_field = f".int('{field["name"]}'{nullable}{unique}{default})"
+                    migration_fields.append(migration_field)
+
+                case "Float":
+
+                    migration_field = f".float('{field["name"]}'{nullable})"
+                    migration_fields.append(migration_field)
+
+                case "Bool":
+
+                    migration_field = f".bool('{field["name"]}'{nullable})"
                     migration_fields.append(migration_field)
 
                 case "String":

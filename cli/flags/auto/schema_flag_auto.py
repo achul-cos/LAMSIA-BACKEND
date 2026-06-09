@@ -11,10 +11,12 @@ class SchemaFlagAuto:
             f"app.models."
             f"{self.resource.model_file[:-3]}"
         )
+
         try:
             module = import_module(module_name)
-        except:
+        except Exception as e:
             print(f"Error Spatial : Can't run --auto feature. {module_name}.py haven't created yet.")
+            print(f"System : {e}")
             return False
         
         model_class = getattr(module, self.resource.class_name)
@@ -51,6 +53,7 @@ class SchemaFlagAuto:
     def classify_fields(self):
         key_data = []
         body_data = []
+        nullable_data = []
         secret_data = []
         model_fields = self.get_model_fields()
         if model_fields is False:
@@ -59,13 +62,18 @@ class SchemaFlagAuto:
         for field in model_fields:
             if field["primary_key"]:
                 key_data.append(field)
+
             elif field["secret"]:
                 secret_data.append(field)
+
+            elif field["nullable"]:
+                nullable_data.append(field)
+
             else:
                 body_data.append(field)
 
         return [
-            key_data, body_data, secret_data
+            key_data, body_data, nullable_data, secret_data
         ]
     
     def map_python_type(self, sqlalchemy_type):
@@ -85,7 +93,8 @@ class SchemaFlagAuto:
         Jika merujuk pada list self.classify_fields(), lisy akan berisi tiga anggota,
         self.classify_fields()[0] = Kelompok key_data,
         self.classify_fields()[1] = Kelompok body_data,
-        self.classify_fields()[2] = Kelompok secret_data,
+        self.classify_fields()[2] = Kelompok nullable_data,
+        self.classify_fields()[3] = Kelompok secret_data,
         """
         schema_fields = []
 
@@ -105,7 +114,7 @@ class SchemaFlagAuto:
         
         list_schema_fields = [
             self.generate_schema_fields(self.classify_fields())[1],
-            self.generate_schema_fields(self.classify_fields())[2],
+            self.generate_schema_fields(self.classify_fields())[3],
         ]
 
         schema_field = ""
@@ -129,6 +138,7 @@ class SchemaFlagAuto:
         list_schema_fields = [
             self.generate_schema_fields(self.classify_fields())[0],
             self.generate_schema_fields(self.classify_fields())[1],
+            self.generate_schema_fields(self.classify_fields())[2],
         ]
 
         schema_field = ""
@@ -140,3 +150,26 @@ class SchemaFlagAuto:
     {str(list)}"""
 
         return schema_field
+    
+    def generate_update_schema(self):
+        if self.classify_fields() is False:
+            return False
+        
+        list_schema_fields = [
+            self.generate_schema_fields(self.classify_fields())[1],
+            self.generate_schema_fields(self.classify_fields())[2],
+            self.generate_schema_fields(self.classify_fields())[3],
+        ]
+
+        schema_field = ""
+
+        for groupList in list_schema_fields:
+            for list in groupList:
+
+                if list.startswith("created_at:") or list.startswith("updated_at"):
+                    continue
+
+                schema_field += f"""
+    {str(list)}"""
+
+        return schema_field    
