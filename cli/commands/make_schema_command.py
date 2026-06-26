@@ -26,3 +26,4 @@ class MakeSchemaCommand:
         else:
             print(f"Schema Successful Created : {file[0]}")
             print(f"{file[0]} Path : {file[1]}")
+            print(f"Using auto features")

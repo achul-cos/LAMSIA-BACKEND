@@ -3,21 +3,46 @@ from app.factories.user_factory import UserFactory
 from cli.utils.resource_name import ResourceName
 import importlib
 
+import inspect
+import pkgutil
+from app.factories.base_factory import BaseFactory
+import app.factories
+
 class FactorySeeder:
     def __init__(self, factory_name: str = "", count: int = 10):
         self.factory_name = factory_name
         self.count = count
 
+    @staticmethod
+    def get_factory():
+        factories = []
+
+        for _, module_name, _ in pkgutil.iter_modules(app.factories.__path__):
+
+            if module_name == "base_factory" or module_name == "factory_seeder":
+                continue
+
+            module = importlib.import_module(f"app.factories.{module_name}")
+
+            for _, obj in inspect.getmembers(module, inspect.isclass):
+                
+                if issubclass(obj, BaseFactory) and obj is not BaseFactory and obj is not FactorySeeder:
+                    factories.append(obj())
+
+        return factories
+
     def run(self):
 
+        factories = self.get_factory()
+
+        if (factories.count == 0):
+            print("Factory Seeder : Can't run factory, karena belum ada factory yang dibuat.")
+            return
+        
         db = SessionLocal()
 
-        FactorySeeder = [
-            UserFactory()
-        ]
-
-        for factory in FactorySeeder:
-
+        for factory in factories:
+            
             factory_data = []
 
             for _ in range(self.count):

@@ -30,3 +30,6 @@ class Config:
         APP_PATH / "migrations/versions"
     )
 
+    SEEDER_PATH = (
+        APP_PATH / "seeders"
+    )

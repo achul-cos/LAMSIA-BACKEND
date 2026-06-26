@@ -3,6 +3,7 @@ from cli.commands.make_model_command import MakeModelCommand
 from cli.commands.make_schema_command import MakeSchemaCommand
 from cli.commands.make_repository_command import MakeRepositoryCommand
 from cli.commands.make_route_command import MakeRouteCommand
+from cli.commands.make_seeder_command import MakeSeederCommand
 from cli.utils.resource_name import ResourceName
 from app.migrations.migration_manager import handle_migrations, rollback_last, reset_migrations, status
 from app.seeders.seeder_runner import run_seeder, run_seeders
@@ -153,7 +154,26 @@ class Lamsia:
                 pass
 
             case "make:seeder":
-                pass
+                """
+                Seeder command schematic:
+
+                > python lamsia.py make:seeder [name_seeder] --[flags]
+
+                this is version 0.1
+                """
+
+                if self.resource == "":
+                    print(f"Error : Seeder Command Scematic Invalid.")
+                    print(f"python lamsia.py make:seeder [name_seeder]")
+                    print("You didn't input any [name_seeder]")  
+                    sys.exit()
+
+                if self.has_flag("--auto"):
+                    seeder_command = MakeSeederCommand(self.resource)
+                    seeder_command.handleAuto() 
+                else:
+                    seeder_command = MakeSeederCommand(self.resource)
+                    seeder_command.handle() 
 
             case "make:factory":
                 pass
@@ -312,7 +332,6 @@ class Lamsia:
 
                 # Make Repository
                                                   
-
             case "help":
                 print(
                     f"""

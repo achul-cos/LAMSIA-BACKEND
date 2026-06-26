@@ -1,11 +1,10 @@
-
 # ------------------------------------------------------------------
-# 002_create_users_table.py
+# 018_create_users_table.py
 # ------------------------------------------------------------------
-# 002_create_users_table.py yaitu kode yang mendefinisikan tabel migration dari
-# model user_model.py. Kode ditulis dengan format ORM
-# pewarisan dari class Base, yang terdiri dari nama column, tipe data,
-# dan atribut lainya dari column tersebut
+# Menjalankan migration pada model User di database.
+# Migration adalah membuat atau menghapus tabel suatu model.
+# Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
+# model, bersamaan dengan tipe data dan meta data lainya
 # ------------------------------------------------------------------
 
 from app.migrations.schema_builder import Schema
@@ -37,8 +36,11 @@ def upgrade(engine):
     .build(engine)   
     """
     Schema("users")\
-        .int("age")\
-        .text("bio")\
+        .id()\
+        .string('username', length=100, nullable=False)\
+        .string('telephone', length=100, nullable=False)\
+        .string('password', length=255, nullable=False)\
+        .timestamps()\
     .build(engine)
 
 def downgrade(engine):
@@ -65,8 +67,8 @@ def downgrade(engine):
     ])
     """
     Schema("users").deleteColumns(engine, [
-        'age',
-        'bio'
+        #'atrribute1',
+        #'atribute2',
     ])
 
     """
@@ -76,12 +78,12 @@ def downgrade(engine):
     engine (variabel) : fungsi creata_engine(database_url) dari modul SQLalchemy
 
     Function Schematic:
-    Schema("<table_name>").deleteTable()
+    Schema("<table_name>").deleteTable(engine)
 
     <table_name> (string)   : Nama table yang akan dihapus
 
     Example:
-    Schema("test_table").deleteTable()
+    Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("users").deleteTable()
+    # Schema("users").deleteTable(engine)

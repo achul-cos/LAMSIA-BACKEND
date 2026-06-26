@@ -114,7 +114,8 @@ class Schema:
             table = Table(
                 self.table_name,
                 Base.metadata,
-                *self.columns
+                *self.columns,
+                extend_existing=True
             )
 
             table.create(bind=engine)

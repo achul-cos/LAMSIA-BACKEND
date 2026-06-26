@@ -1,16 +1,5 @@
-from cli.utils.resource_name import ResourceName
-
-class SeederTemplate:
-    def __init__(self, seeder_name: str):
-        self.seeder_name = seeder_name.lower()
-        self.seeder_file_name = ResourceName(self.seeder_name).seeder_file
-        self.seeder_class_name = ResourceName(self.seeder_name).class_name
-        self.seeder_plural_name = ResourceName(self.seeder_name).table_name
-    
-    def build(self, seeder_fields:str = ""):
-        return (
-f'''# ------------------------------------------------------------------
-# {self.seeder_file_name}.py
+# ------------------------------------------------------------------
+# pengasuh_seeder.py
 # ------------------------------------------------------------------
 # Kode ini menjalankan fungsi seeder. Seeder adalah data yang ditulis
 # secara manual didalam kode ini, lalu dimasukkan kedalam tabel model
@@ -19,10 +8,10 @@ f'''# ------------------------------------------------------------------
 # ------------------------------------------------------------------
 
 from app.seeders.base_seeder import BaseSeeder
-from app.models.{self.seeder_name}_model import {self.seeder_class_name}
+from app.models.pengasuh_model import Pengasuh
 from app.core.database import SessionLocal
 
-class {self.seeder_class_name}Seeder(BaseSeeder):
+class PengasuhSeeder(BaseSeeder):
 
     """
     Memasukkan data-data yang dibuat pada kode berikut kedalam
@@ -75,18 +64,24 @@ class {self.seeder_class_name}Seeder(BaseSeeder):
     def run(self):
         db = SessionLocal()
 
-        {self.seeder_plural_name} = [
-            {self.seeder_class_name}(
+        pengasuhs = [
+            Pengasuh(
                 # Isi disini
-{seeder_fields}
+                name="Lorem Ipsum",
+                telephone="Lorem Ipsum",
+                password="Lorem Ipsum",
+
             ),
-            {self.seeder_class_name}(
+            Pengasuh(
                 # Isi disini
-{seeder_fields}
+                name="Lorem Ipsum",
+                telephone="Lorem Ipsum",
+                password="Lorem Ipsum",
+
             )
         ]
 
-        db.add_all({self.seeder_plural_name})
+        db.add_all(pengasuhs)
         db.commit()
 
-        print("Seeder : {self.seeder_class_name}Seeder excuted")''')
+        print("Seeder : PengasuhSeeder excuted")
