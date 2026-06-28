@@ -1,181 +1,252 @@
-**<div align=center>Initialize Project Into API</div>**
+<div align="center">
 
-1. Clone proyek github ini ke perangkat komputer anda
+# 💊 LAMSIA — Backend API
 
-2. Pada file .env.example, silahkan duplicate dan ganti namanya menjadi .env
+**LAMSIA** (*Layanan Manajemen Smart Medication Box IoT*) adalah sistem backend untuk kotak obat pintar berbasis IoT yang membantu pengguna mengelola jadwal dan konsumsi obat secara otomatis.
 
-3. Nyalakan server mysql anda (bisa secara local), dan buat database baru (disarankan nama database yang baru itu yaitu lamsia_db), untuk menambahkan database baru bisa menjalan perintah CLI sebagai berikut:
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-D71F00?style=flat-square)](https://www.sqlalchemy.org/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-    ```console
-    PS C:\WINDOWS\System32> mysql -u root -p
-    ```
+</div>
 
-    // Atau alternatifnya,
+---
 
-    ```console
-    PS C:\Program Files\MySQL\MySQL Server 8.0\bin> mysql -u root -p
-    ```
+## 📋 Daftar Isi
 
-    // Setelahnya, masukkan password dari akun root (atau anda dapat ganti dengan akun admin lainya)
-    // Setelahnya, anda dapat tambahkan database untuk proyek, sebagai contoh kita akan tambahkan lamsia_db
+- [Tentang Proyek](#-tentang-proyek)
+- [Tech Stack](#-tech-stack)
+- [Struktur Proyek](#-struktur-proyek)
+- [Prasyarat](#-prasyarat)
+- [Instalasi & Konfigurasi](#-instalasi--konfigurasi)
+- [Menjalankan Server](#-menjalankan-server)
+- [Migrasi Database](#-migrasi-database)
+- [Troubleshooting](#-troubleshooting)
 
-    ```console
-    mysql> CREATE DATABASE lamsia_db;
-    ```
+---
 
-    // Setelahnya, untuk memastikan apakah database lamsia_db yang anda tambahkan itu berhasil anda dapat melihat list dari database pada mysql anda, dengan cara,
+## 📖 Tentang Proyek
 
-    ```python
-    mysql> SHOW databases;
-    ```
+LAMSIA-BACKEND adalah REST API berbasis **FastAPI** yang menjadi jembatan komunikasi antara perangkat keras IoT (Arduino / Raspberry Pi) dan aplikasi klien. Sistem ini mengelola data pengguna, jadwal konsumsi obat, dan status kotak obat secara real-time melalui protokol MQTT dan HTTP.
 
-    // Jika berhasil, pada output dari perintah mysql tersebut akan muncul database lamsia_db,
+---
 
-    ```console
-    +--------------------+
-    | Database           |
-    +--------------------+
-    | information_schema |
-    | lamsia_db          |
-    | mysql              |
-    | performance_schema |
-    | sys                |
-    +--------------------+
-    ```
+## 🛠 Tech Stack
 
-4. Pada file .env, tambahkan mysql host, mysql port, mysql user(disarankan root), mysql user password, dan nama database baru yang anda berikan, sebagai contoh sebagai berikut untuk pengujian lokal,
+| Komponen | Teknologi |
+|---|---|
+| Framework API | FastAPI + Uvicorn |
+| ORM / Database | SQLAlchemy + PyMySQL |
+| Database | MySQL 8.0 |
+| Konfigurasi Env | python-dotenv |
+| Utilities | inflect, faker |
 
-    ```.env
-    DB_HOST=localhost
-    DB_PORT=3306
-    DB_USER=root
-    DB_PASSWORD=root
-    DB_NAME=lamsia_db
-    ```
+---
 
-5. Jalankan virtual envrioment python, dengan buka powershell dan ganti path powershell nya menjadi path proyek ini, lalu jalankan perintah CLI
+## 📁 Struktur Proyek
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> python -m venv venv
-    ```
+```
+LAMSIA-BACKEND/
+├── app/                  # Kode utama aplikasi FastAPI
+├── cli/                  # CLI tools (seed data, utilitas)
+├── tests/                # Unit & integration tests
+├── create_tables.py      # Script migrasi database
+├── lamsia.py             # Entry point alternatif
+├── requirements.txt      # Daftar dependensi Python
+├── .env.example          # Template konfigurasi environment
+└── README.md
+```
 
-5a. Silahkan aktivasi venv nya dengan menjalankan perintah CLI,
+---
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> .\venv\Scripts\Activate.ps1
-    ```
+## ✅ Prasyarat
 
-5b. Jika terjadi error seperti berikut, maka jalankan perintah CLI pada poin 5c
+Pastikan sudah terinstall di sistem kamu:
 
-    ```console
-    .\venv\Scripts\Activate.ps1 : File C:\LAMSIA\LAMSIA-BACKEND\venv\Scripts\Activate.ps1 cannot be loaded because 
-    running scripts is disabled on this system. For more information, see about_Execution_Policies at 
-    https:/go.microsoft.com/fwlink/?LinkID=135170.
-    At line:1 char:1
-    + .\venv\Scripts\Activate.ps1
-    + ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        + CategoryInfo          : SecurityError: (:) [], PSSecurityException
-        + FullyQualifiedErrorId : UnauthorizedAccess
-    ```
+- **Python** `3.10+` — [download](https://www.python.org/downloads/)
+- **MySQL Server** `8.0+` — [download](https://dev.mysql.com/downloads/mysql/)
+- **Git** — [download](https://git-scm.com/)
 
-5c. Jalankan perintah CLI berikut jika terjadi error seperti di poin 5b,
+---
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-    ```
+## ⚙️ Instalasi & Konfigurasi
 
-5d. Jika perintah CLI pada poin 5c tidak dapat dijalankan, maka ada kemungkinan anda tidak memiliki hak administrator. Maka jalankan perintah CLI berikut sebagai alternatif,
+### 1. Clone Repositori
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-    ```
+```bash
+git clone https://github.com/achul-cos/LAMSIA-BACKEND.git
+cd LAMSIA-BACKEND
+```
 
-5e. Alternatif paling akhir yaitu menggunakan venv dengan cara seperti ini,
+### 2. Konfigurasi Environment
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> .\venv\Scripts\python.exe 
-    ```             
-    
-    \\ Perintah CLI di atas yaitu bentuk dasar dari perintah CLInya,
-    \\ Perintah CLI di bawah yaitu variasi dari bentuk dasarnya
+Duplikat file `.env.example` dan rename menjadi `.env`:
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> .\venv\Scripts\python.exe --version
-    ```
+```bash
+# Windows
+copy .env.example .env
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> .\venv\Scripts\python.exe -m pip list
-    ```
+# macOS / Linux
+cp .env.example .env
+```
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> .\venv\Scripts\python.exe -m uvicorn app.main:app --reload
-    ```
+Kemudian isi variabel berikut di `.env`:
 
-6. Install beberapa package dengan menjalankan perintah CLI
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=lamsia_db
+```
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> pip install fastapi uvicorn sqlalchemy pymysql python-dotenv inflect faker
-    ```
+### 3. Siapkan Database MySQL
 
-6a. Atau alternatif paling singkat, dapat menjalankan perintah CLI berikut,
+Buka terminal MySQL dan buat database baru:
 
-    ```console
-    PS C:\LAMSIA\LAMSIA-BACKEND> pip install -r requirements.txt
-    ```
+```bash
+# Masuk ke MySQL
+mysql -u root -p
 
-7. Lalu jalankan server FastAPI
+# Atau jika perlu path lengkap (Windows)
+# "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
+```
 
-    ```console
-    uvicorn app.main:app --reload
-    ```
+```sql
+-- Buat database
+CREATE DATABASE lamsia_db;
 
-8. Server dianggap berjalan jika kamu dapat mengakses link server yang keluar di terminal, contohnya:
+-- Verifikasi
+SHOW DATABASES;
+```
 
-    http://127.0.0.1:8000
+Output yang diharapkan:
 
-Opsional:
+```
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| lamsia_db          |  ✓
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+```
 
-9. Untuk keluar dari venv ptyhon, kamu bisa menjalankan,
+### 4. Setup Virtual Environment
 
-    ```console
-    (venv) PS C:\LAMSIA\LAMSIA-BACKEND> deactivate
-    ```
+```bash
+# Buat venv
+python -m venv venv
 
+# Aktivasi (Windows PowerShell)
+.\venv\Scripts\Activate.ps1
 
-=============================================================================================
+# Aktivasi (macOS / Linux)
+source venv/bin/activate
+```
 
-**<div align=center>Migration Database</div>**
+> **Catatan:** Jika muncul error aktivasi di Windows, lihat bagian [Troubleshooting](#-troubleshooting).
 
-0. Untuk memastikan apakah migrasi database atau proses pembuatan table berserta colomnya berjalan dengan baik, maka anda bisa menjalankan perintah mysql,
+### 5. Install Dependensi
 
-    ```console
-    mysql> USE lamsia_db;
-    ```
+```bash
+pip install -r requirements.txt
+```
 
-    // Perintah ini memilih database lamsia_db untuk dapat kita lakukan query (seperti show table)
+---
 
-    ```console
-    mysql> SHOW TABLES;
-    +---------------------+
-    | Tables_in_lamsia_db |
-    +---------------------+
-    | users               |
-    +---------------------+
-    ```
+## 🚀 Menjalankan Server
 
-    // Jika table yang telah diprogramkan pada proyek, muncul pada perintah mysql tersebut, maka anda berhasil melakukan migrasi tabel
-    // Selanjutnya, kita akan melakukan pengecekan coloum tabel, apakah telah sesuai dengan yang diprogram pada proyek,
+```bash
+uvicorn app.main:app --reload
+```
 
-    ```console
-    mysql> DESCRIBE users;
-    +-----------+--------------+------+-----+---------+----------------+
-    | Field     | Type         | Null | Key | Default | Extra          |
-    +-----------+--------------+------+-----+---------+----------------+
-    | id        | int          | NO   | PRI | NULL    | auto_increment |
-    | username  | varchar(100) | NO   |     | NULL    |                |
-    | telephone | varchar(100) | NO   |     | NULL    |                |
-    | password  | varchar(255) | NO   |     | NULL    |                |
-    +-----------+--------------+------+-----+---------+----------------+ 
-    ```
+Server akan berjalan di: **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
-    // Jika hasil output dari perintah mysql berupa tabel dengan kolom-kolom yang sesuai dengan yang diprogram di proyek, maka migrasi tabel dan kolom nya berhasil.
+Dokumentasi API otomatis tersedia di:
+- **Swagger UI** → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **ReDoc** → [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+Untuk keluar dari virtual environment:
+
+```bash
+deactivate
+```
+
+---
+
+## 🗄 Migrasi Database
+
+Tabel database dibuat otomatis saat server pertama kali dijalankan melalui `create_tables.py`. Untuk memverifikasi hasilnya secara manual:
+
+```sql
+USE lamsia_db;
+
+-- Cek tabel yang tersedia
+SHOW TABLES;
+
+-- Cek struktur tabel users
+DESCRIBE users;
+```
+
+Output yang diharapkan untuk `DESCRIBE users`:
+
+```
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int          | NO   | PRI | NULL    | auto_increment |
+| username  | varchar(100) | NO   |     | NULL    |                |
+| telephone | varchar(100) | NO   |     | NULL    |                |
+| password  | varchar(255) | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Error: Script tidak bisa dijalankan di PowerShell
+
+Jika muncul error berikut saat aktivasi venv:
+
+```
+.\venv\Scripts\Activate.ps1 cannot be loaded because running scripts is disabled on this system.
+```
+
+**Solusi 1** — Ubah execution policy untuk user saat ini (disarankan):
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+**Solusi 2** — Bypass untuk sesi ini saja (jika tidak punya hak admin):
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+**Solusi 3** — Jalankan Python langsung via path venv (tanpa aktivasi):
+
+```powershell
+# Cek versi
+.\venv\Scripts\python.exe --version
+
+# Lihat package terinstall
+.\venv\Scripts\python.exe -m pip list
+
+# Jalankan server
+.\venv\Scripts\python.exe -m uvicorn app.main:app --reload
+```
+
+---
+
+<div align="center">
+
+Dibuat dengan ❤️ oleh [Nasrullah (Achul)](https://github.com/achul-cos) dan [Steven](https://github.com/Stevv07)
+
+</div>
