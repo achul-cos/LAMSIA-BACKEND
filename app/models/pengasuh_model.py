@@ -33,4 +33,3 @@ class Pengasuh(Base):
     password = Column(String(255), nullable=False, info={"secret"})
     created_at = Column(DateTime(), default=now())
     updated_at = Column(DateTime(), default=now())
-            

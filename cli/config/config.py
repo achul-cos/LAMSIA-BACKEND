@@ -29,4 +29,3 @@ class Config:
     MIGRATION_PATH = (
         APP_PATH / "migrations/versions"
     )
-

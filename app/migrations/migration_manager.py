@@ -2,7 +2,7 @@ import os
 import importlib
 from sqlalchemy import inspect
 from app.migrations.migration_model import Migration
-from app.core.database import engine, SessionLocal, Base
+from app.core.database import engine, SessionLocal
 from app.migrations.migration_model import Migration
 
 MIGRATION_PATH = "app/migrations/versions"

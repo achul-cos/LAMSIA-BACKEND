@@ -6,7 +6,7 @@
 # itu sendiri. Setiap proses CRUD seperti migration, seeder, query
 # pada fungsi dan class didalam sistem. Sistem hanya perlu melakukan
 # import objek database pada kode ini. Jadi tidak perlu melakukan koneksi
-# dengan database pada setiap kode yang ingin melakukan CRUD.   
+# dengan database pada setiap kode yang ingin melakukan CRUD.
 # ------------------------------------------------------------------
 
 from sqlalchemy import create_engine                        # import fungsi create_engine dari package sqlalchemy
@@ -22,7 +22,7 @@ load_dotenv()
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PASSWORD = os.getenv("DB_PASSWORD", " ")
 DB_NAME = os.getenv("DB_NAME")
 
 # Mendefinisikan variabel DATABASE_URL, sebagai alamat atau url untuk mengakses database mysql berdasarkan variabel .env
