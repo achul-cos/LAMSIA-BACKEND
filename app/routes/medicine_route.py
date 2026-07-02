@@ -24,6 +24,8 @@ def create_medicine(medicine_data:MedicineCreate, db: Session = Depends(get_db))
     dosage=medicine_data.dosage,
     form=medicine_data.form,
     times=medicine_data.times,
+    quantity=medicine_data.quantity,
+    kompartemen=medicine_data.kompartemen,
     repeat=medicine_data.repeat
   )
 

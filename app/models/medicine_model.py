@@ -28,4 +28,6 @@ class Medicine(Base):
     dosage = Column(Integer, nullable=False)
     form = Column(VARCHAR(255), nullable=False)
     times = Column(Integer, nullable=False)
+    quantity = Column(Integer, nullable=False)
+    kompartemen = Column(Integer, nullable=False)
     repeat = Column(VARCHAR(255), nullable=False)

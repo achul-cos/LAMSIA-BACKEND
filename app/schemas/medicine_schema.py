@@ -5,6 +5,8 @@ class MedicineCreate(BaseModel):
   dosage: int
   form: str
   times: int
+  quantity: int
+  kompartemen: int
   repeat: str
 
 class MedicineResponse(MedicineCreate):
