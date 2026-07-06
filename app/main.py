@@ -6,6 +6,7 @@ from app.routes.user_routes import router as user_router
 from app.routes.medicine_route import router as medicine_router
 from app.routes.pengasuh_route import router as pengasuh_router
 from app.routes.sensorresult_route import router as sensorresult_router
+from app.routes.schedules_route import router as schedules_router
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ app.add_middleware(
 # Mendaftarkan semua route ke aplikasi FastAPI
 app.include_router(user_router)
 app.include_router(medicine_router)
+app.include_router(schedules_router)
 app.include_router(pengasuh_router)
 app.include_router(sensorresult_router)
 

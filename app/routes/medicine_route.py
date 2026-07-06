@@ -4,6 +4,7 @@ from app.core.database import SessionLocal
 from app.models.medicine_model import Medicine
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.medicine_schema import MedicineCreate, MedicineResponse
+from app.repositories.medicine_repository import MedicineRepository
 
 router = APIRouter(
   prefix="/medicines",
@@ -18,25 +19,12 @@ def get_db():
     db.close()
 
 @router.post('/', response_model=MedicineResponse)
-def create_medicine(medicine_data:MedicineCreate, db: Session = Depends(get_db)):
-  new_medicine = Medicine(
-    name=medicine_data.name,
-    dosage=medicine_data.dosage,
-    form=medicine_data.form,
-    times=medicine_data.times,
-    quantity=medicine_data.quantity,
-    kompartemen=medicine_data.kompartemen,
-    repeat=medicine_data.repeat
-  )
-
-  try:
-    db.add(new_medicine)
-    db.commit()
-    db.refresh(new_medicine)
-    return new_medicine
-  except Exception as e:
-    db.rollback()
-    raise HTTPException(status_code=500, detail=f"Gagal menyimpan data: {str(e)}")
+def create_medicine(
+  medicine_data:MedicineCreate,
+  db: Session = Depends(get_db)
+):
+  RepositoryResponse = MedicineRepository.create(db, medicine_data)
+  return RepositoryResponse
 
 @router.get('/', response_model=List[MedicineResponse])
 def get_all_medicines(db: Session = Depends(get_db)):

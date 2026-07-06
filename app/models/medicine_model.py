@@ -6,8 +6,10 @@
 # objek medicine memiliki atribut apa saja. 
 # ------------------------------------------------------------------
 
-from sqlalchemy import Column, Integer, String, VARCHAR
+from app.core.time import now
 from app.core.database import Base
+from sqlalchemy import Column, Integer, VARCHAR, DateTime
+from sqlalchemy.orm import relationship
 
 class Medicine(Base):
     """
@@ -27,7 +29,14 @@ class Medicine(Base):
     name = Column(VARCHAR(255), nullable=False)
     dosage = Column(Integer, nullable=False)
     form = Column(VARCHAR(255), nullable=False)
-    times = Column(Integer, nullable=False)
     quantity = Column(Integer, nullable=False)
     kompartemen = Column(Integer, nullable=False)
     repeat = Column(VARCHAR(255), nullable=False)
+    created_at = Column(DateTime(), default=now())
+    updated_at = Column(DateTime(), default=now())
+
+    schedules = relationship(
+        "Schedules",
+        back_populates="medicine",
+        cascade="all, delete-orphan"
+    )

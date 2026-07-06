@@ -4,10 +4,11 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from app.core.database import engine, Base
+from app.models.user_model import User
 from app.models.medicine_model import Medicine
 from app.models.pengasuh_model import Pengasuh
+from app.models.schedules_model import Schedules
 from app.models.sensorresult_model import Sensorresult
-from app.models.user_model import User
 
 def main():
   print("Menghubungkan ke MySQL Laragon")
