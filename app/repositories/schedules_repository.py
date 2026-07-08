@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException
-from app.models.schedules_model import Schedules
+from app.models.schedules_model import Schedule
 from app.models.medicine_model import Medicine
 from app.schemas.schedules_schema import SchedulesCreate, SchedulesUpdate
 from app.helper.query_parser import QueryParser
@@ -27,7 +27,7 @@ class SchedulesRepository:
         if not medicine:
             raise HTTPException(status_code=404, detail="Medicine tidak ditemukan")
 
-        schedules = Schedules(**schedules_data.model_dump())
+        schedules = Schedule(**schedules_data.model_dump())
 
         db.add(schedules)
         db.commit()
@@ -40,14 +40,14 @@ class SchedulesRepository:
     """
     @staticmethod
     def get_all(db: Session):
-        return db.query(Schedules).options(joinedload(Schedules.medicine)).all()
+        return db.query(Schedule).options(joinedload(Schedule.medicine)).all()
 
     @staticmethod
     def get_by_id(db: Session, schedules_id: int):
         schedule = (
-            db.query(Schedules)
-            .options(joinedload(Schedules.medicine))
-            .filter(Schedules.id == schedules_id)
+            db.query(Schedule)
+            .options(joinedload(Schedule.medicine))
+            .filter(Schedule.id == schedules_id)
             .first()
         )
 
@@ -58,10 +58,19 @@ class SchedulesRepository:
             )
 
         return schedule
-    
+
+    @staticmethod
+    def get_active(db: Session):
+        return (
+            db.query(Schedule)
+            .options(joinedload(Schedule.medicine))
+            .filter(Schedule.is_active == True)
+            .all()
+        )
+
     @staticmethod
     def update_put(db: Session, schedules_id: int, schedules_data: SchedulesUpdate):
-        schedules = db.query(Schedules).filter(Schedules.id == schedules_id).first()
+        schedules = db.query(Schedule).filter(Schedule.id == schedules_id).first()
 
         if not schedules:
             raise HTTPException(
@@ -80,14 +89,14 @@ class SchedulesRepository:
     
     @staticmethod
     def update_patch(db: Session, schedules_id:int, payload: dict):
-        schedules = db.query(Schedules).filter(Schedules.id == schedules_id).first()
+        schedules = db.query(Schedule).filter(Schedule.id == schedules_id).first()
 
         if not schedules:
             return None
         
         for key, value in payload.items():
 
-            if not hasattr(Schedules, key):
+            if not hasattr(Schedule, key):
                 continue
 
             setattr(schedules, key, value)
@@ -100,7 +109,7 @@ class SchedulesRepository:
     
     @staticmethod
     def delete(db: Session, schedules_id: int):
-        schedules = db.query(Schedules).filter(Schedules.id == schedules_id).first()
+        schedules = db.query(Schedule).filter(Schedule.id == schedules_id).first()
 
         if not schedules:
             raise HTTPException(
@@ -114,7 +123,7 @@ class SchedulesRepository:
     
     @staticmethod
     def delete_all(db: Session):
-        db.query(Schedules).delete(synchronize_session=False)
+        db.query(Schedule).delete(synchronize_session=False)
 
         db.commit()
         
@@ -124,14 +133,14 @@ class SchedulesRepository:
     
     @staticmethod
     def filter(db: Session, **params):
-        schedules = db.query(Schedules)
+        schedules = db.query(Schedule)
 
         for key, value in params.items():
             if value is None:
                 continue
 
-            if hasattr(Schedules, key):
-                column = getattr(Schedules, key)
+            if hasattr(Schedule, key):
+                column = getattr(Schedule, key)
                 if "secret" in column.info:
                     continue
 
@@ -141,9 +150,11 @@ class SchedulesRepository:
     
     @staticmethod
     def where(db:Session, query):
-        expression = QueryParser(query, Schedules).parse()
+        expression = QueryParser(query, Schedule).parse()
         
         if expression is None:
-            return []        
+            return []
 
-        return db.query(Schedules).filter(expression).all()
+        return db.query(Schedule).filter(expression).all()
+
+

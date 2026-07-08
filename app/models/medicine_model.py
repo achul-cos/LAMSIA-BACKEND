@@ -32,11 +32,11 @@ class Medicine(Base):
     quantity = Column(Integer, nullable=False)
     kompartemen = Column(Integer, nullable=False)
     repeat = Column(VARCHAR(255), nullable=False)
-    created_at = Column(DateTime(), default=now())
-    updated_at = Column(DateTime(), default=now())
+    created_at = Column(DateTime(), default=now)
+    updated_at = Column(DateTime(), default=now)
 
     schedules = relationship(
-        "Schedules",
+        "Schedule",
         back_populates="medicine",
         cascade="all, delete-orphan"
     )

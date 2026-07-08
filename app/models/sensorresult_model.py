@@ -27,6 +27,5 @@ class Sensorresult(Base):
     id = Column(Integer, primary_key=True, index=True)
     heart_rate = Column(Integer, nullable=False)
     blood_saturation = Column(Float, nullable=False)
-    created_at = Column(DateTime(), default=now())
-    updated_at = Column(DateTime(), default=now())    
-            
+    created_at = Column(DateTime(), default=now)
+    updated_at = Column(DateTime(), default=now)

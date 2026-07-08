@@ -31,5 +31,5 @@ class Pengasuh(Base):
     address = Column(String(255), default="Indonesia, Kota Batam")
     family_status = Column(Enum('Anak', 'Kerabat', 'Cucu', 'Lansia', 'Anggota Keluarga Lainya'), default='Anggota Keluarga Lainya', nullable=True)
     password = Column(String(255), nullable=False, info={"secret"})
-    created_at = Column(DateTime(), default=now())
-    updated_at = Column(DateTime(), default=now())
+    created_at = Column(DateTime(), default=now)
+    updated_at = Column(DateTime(), default=now, onupdate=now)

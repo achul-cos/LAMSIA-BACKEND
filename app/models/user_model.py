@@ -18,5 +18,5 @@ class User(Base):
     username = Column(String(100), nullable=False)
     telephone = Column(String(100), nullable=False)
     password = Column(String(255), nullable=False, info={"secret"})
-    created_at = Column(DateTime, default=now())
-    updated_at = Column(DateTime, default=now())
+    created_at = Column(DateTime, default=now)
+    updated_at = Column(DateTime, default=now)

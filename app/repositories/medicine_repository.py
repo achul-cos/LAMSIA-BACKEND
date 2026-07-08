@@ -10,7 +10,7 @@ from app.core.time import now
 from sqlalchemy.orm import Session
 from app.models.medicine_model import Medicine
 from app.helper.query_parser import QueryParser
-from app.models.schedules_model import Schedules
+from app.models.schedules_model import Schedule
 from app.schemas.medicine_schema import MedicineCreate, MedicineUpdate
 
 class MedicineRepository:
@@ -35,7 +35,7 @@ class MedicineRepository:
             db.flush()
 
             for schedule_time in medicine_data.times:
-                schedule = Schedules(
+                schedule = Schedule(
                     medicine_id=medicine.id,
                     time=schedule_time
                 )
