@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.scheduler.history_scheduler import start_scheduler
 
 # Import setiap route yang ada
+from app.routes.dashboard_route import router as dashboard_router
 from app.routes.user_routes import router as user_router
 from app.routes.medicine_route import router as medicine_router
 from app.routes.pengasuh_route import router as pengasuh_router
@@ -25,6 +26,7 @@ app.add_middleware(
 )
 
 # Mendaftarkan semua route ke aplikasi FastAPI
+app.include_router(dashboard_router)
 app.include_router(user_router)
 app.include_router(medicine_router)
 app.include_router(schedules_router)
