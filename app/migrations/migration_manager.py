@@ -116,7 +116,7 @@ def reset_migrations():
         print("Success : All Migration Reset!")
 
 def status():
-    db = SessionLocal()\
+    db = SessionLocal()
     
     applied_migrations = db.query(Migration).all()
 

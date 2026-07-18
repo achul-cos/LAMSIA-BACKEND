@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
-# 017_create_sensorresults_table.py
+# 020_create_sonars_table.py
 # ------------------------------------------------------------------
-# Menjalankan migration pada model Sensorresult di database.
+# Menjalankan migration pada model Sonar di database.
 # Migration adalah membuat atau menghapus tabel suatu model.
 # Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
 # model, bersamaan dengan tipe data dan meta data lainya
@@ -35,10 +35,11 @@ def upgrade(engine):
         .string("atribute_2")\
     .build(engine)   
     """
-    Schema("sensorresults")\
+    Schema("sonars")\
         .id()\
-        .int('heart_rate', nullable=False)\
-        .float('blood_saturation', nullable=False)\
+        .string('sonar_id', length=100, nullable=False)\
+        .string('jarak', length=100, nullable=False)\
+        .string('lebihJauh', length=100, nullable=False)\
         .timestamps()\
     .build(engine)
 
@@ -65,7 +66,7 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    Schema("sensorresults").deleteColumns(engine, [
+    Schema("sonars").deleteColumns(engine, [
         #'atrribute1',
         #'atribute2',
     ])
@@ -85,4 +86,4 @@ def downgrade(engine):
     Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("sensorresults").deleteTable(engine)
+    # Schema("sonars").deleteTable(engine)

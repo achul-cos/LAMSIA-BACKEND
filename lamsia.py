@@ -4,6 +4,7 @@ from cli.commands.make_schema_command import MakeSchemaCommand
 from cli.commands.make_repository_command import MakeRepositoryCommand
 from cli.commands.make_route_command import MakeRouteCommand
 from cli.commands.make_seeder_command import MakeSeederCommand
+from cli.commands.make_factory_command import MakeFactoryCommand
 from cli.utils.resource_name import ResourceName
 from app.migrations.migration_manager import handle_migrations, rollback_last, reset_migrations, status
 from app.seeders.seeder_runner import run_seeder, run_seeders
@@ -176,7 +177,26 @@ class Lamsia:
                     seeder_command.handle() 
 
             case "make:factory":
-                pass
+                """
+                Factory command schematic:
+
+                > python lamsia.py make:factory [factory_name] --[flags]
+
+                this is version 0.1
+                """
+
+                if self.resource == "":
+                    print(f"Error : Factory Command Scematic Invalid.")
+                    print(f"python lamsia.py make:factory [name_factory]")
+                    print("You didn't input any [name_factory]")  
+                    sys.exit()
+
+                if self.has_flag("--auto"):
+                    factory_command = MakeFactoryCommand(self.resource)
+                    factory_command.handleAuto() 
+                else:
+                    factory_command = MakeFactoryCommand(self.resource)
+                    factory_command.handle()
 
             case "migrate":
 

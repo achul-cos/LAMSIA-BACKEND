@@ -1,19 +1,19 @@
 # ------------------------------------------------------------------
-# sensorresult_schema.py
+# sonar_schema.py
 # ------------------------------------------------------------------
-# Kode sensorresult_schema.py berfungsi untuk mengatur bagaimana model
-# Sensorresult dibuat (CREATE) serta melakukan validasi
-# terhadap data yang digunakan untuk membuat objek Sensorresult.
-# Serta bagaimana objek Sensorresult ditampilkan datanya (SHOW)
+# Kode sonar_schema.py berfungsi untuk mengatur bagaimana model
+# Sonar dibuat (CREATE) serta melakukan validasi
+# terhadap data yang digunakan untuk membuat objek Sonar.
+# Serta bagaimana objek Sonar ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
 
-class SensorresultCreate(BaseModel):
+class SonarCreate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin membuat Sensorresult yang baru.
+    Setiap ingin membuat Sonar yang baru.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -31,13 +31,14 @@ class SensorresultCreate(BaseModel):
     password: str
     """
     
-    heart_rate: int
-    blood_saturation: float
+    sonar_id: str
+    jarak: str
+    lebihJauh: str
 
-class SensorresultUpdate(BaseModel):
+class SonarUpdate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin mengubah suatu Sensorresult.
+    Setiap ingin mengubah suatu Sonar.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -55,13 +56,14 @@ class SensorresultUpdate(BaseModel):
     password: str
     """
     
-    heart_rate: int
-    blood_saturation: float 
+    sonar_id: str
+    jarak: str
+    lebihJauh: str 
 
-class SensorresultResponse(BaseModel):
+class SonarResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
-    ingin melihat Sensorresult.
+    ingin melihat Sonar.
 
     Note:
     Penting untuk tidak menampikan data yang bersifat rahasia,
@@ -84,8 +86,9 @@ class SensorresultResponse(BaseModel):
     """
     
     id: int
-    heart_rate: int
-    blood_saturation: float
+    sonar_id: str
+    jarak: str
+    lebihJauh: str
     created_at: datetime
     updated_at: datetime
 

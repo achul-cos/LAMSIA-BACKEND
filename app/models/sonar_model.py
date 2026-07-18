@@ -1,21 +1,21 @@
 # ------------------------------------------------------------------
-# sensorresult_model.py
+# sonar_model.py
 # ------------------------------------------------------------------
-# sensorresult_model.py digunakan untuk melakukan pemodelan class atau
-# objek sensorresult pada sistem. Pemodelan mendefinisikan
-# objek sensorresult memiliki atribut apa saja. 
+# sonar_model.py digunakan untuk melakukan pemodelan class atau
+# objek sonar pada sistem. Pemodelan mendefinisikan
+# objek sonar memiliki atribut apa saja. 
 # ------------------------------------------------------------------
 
 from sqlalchemy import Column, Integer, String, Enum, DateTime, Float
 from app.core.database import Base
 from app.core.time import now
 
-class Sensorresult(Base):
+class Sonar(Base):
     """
-    __tablename__ merupakan variabel yang mendefinisikan nama tabel dari objek sensorresult
+    __tablename__ merupakan variabel yang mendefinisikan nama tabel dari objek sonar
     umumnya dituliskan dalam konsensi table name
     """
-    __tablename__ = "sensorresults"
+    __tablename__ = "sonars"
 
     """
     Pada bagian ini yaitu atribut dari objek atau class tersebut yang tuliskan
@@ -25,8 +25,9 @@ class Sensorresult(Base):
     """
 
     id = Column(Integer, primary_key=True, index=True)
-    heart_rate = Column(Integer, nullable=False)
-    blood_saturation = Column(Float, nullable=False)
+    sonar_id = Column(String(100), nullable=False)
+    jarak = Column(String(100), nullable=False)
+    lebihJauh = Column(String(100), nullable=False)
     created_at = Column(DateTime(), default=now())
     updated_at = Column(DateTime(), default=now())    
             

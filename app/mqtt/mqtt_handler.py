@@ -6,7 +6,10 @@ from dotenv import load_dotenv
 import os
 import json
 from app.models.sensormax_model import Sensormax
+from app.models.sonar_model import Sonar
 from app.core.database import SessionLocal
+
+from app.dataclass.ambil_obat_session import ambil_obat_session
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -64,7 +67,7 @@ class MQTTHandler:
         # C:\Windows\System32>mosquitto_sub -h localhost -t "lamsia/#"
 
         # Logging
-        logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} : mqtt_handler.py [MQTTHandler] <on_message> : NEW MESSAGE FROM TOPIC => {topic} ; AND NEW MESSAGE => {payload} ")
+        # logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} : mqtt_handler.py [MQTTHandler] <on_message> : NEW MESSAGE FROM TOPIC => {topic} ; AND NEW MESSAGE => {payload} ")
 
         # Mapping topic
         if "sonar" in topic:
@@ -106,14 +109,34 @@ class MQTTHandler:
             # pesan yang akan dikirimkan memang akan mengirimkan data mentah atau half processed data (data yang diproses minimum sebelumnya).
 
             # payload sonar pada dasarnya mengirimkan data jarak sensor sonar dengan objek didepan sensor sonar dengan satuan cm
-            sonar_distance = float(payload)
+            # sonar_distance = float(payload)
+
+            sonar = json.loads(payload)
+            id_sonar = sonar.get("sonar_id", "NULL")
+            jarak = sonar.get("jarak", "NULL")
+            lebihJauh = sonar.get("lebihJauh", "NULL")
+            dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             # Setelahnya data sonar_id dan sonar_distance dapat disimpan sebagai log pada database atau dapat ditampilkan pada log sistem
-            logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_monitor_sonar> (SUCCESS) : MONITORING SENSOR SONAR ID: {sonar_id}, DISTANCE: {sonar_distance} CM")
+            # logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_monitor_sonar> (SUCCESS) : MONITORING SENSOR SONAR ID: {id_sonar}, JARAK: {jarak} CM, LEBIHJAUH: {lebihJauh}, DATETIME: {dt}")
+
+            # db = SessionLocal()
+
+            # sensorSonar = Sonar(
+            #     sonar_id = str(id_sonar),
+            #     jarak = str(jarak),
+            #     lebihJauh = str(lebihJauh),
+            #     created_at = datetime.now()
+            # )
+
+            # db.add(sensorSonar)
+            # db.commit()
+
+            monitor_ambil_obat(sonar_id=int(id_sonar), jarak=float(jarak))
 
         except Exception as e:
             # Error handler
-            logger.error(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_monitor_sonar> (ERROR) : ERROR PARSING DATA SENSOR SONAR WITH TOPIC : {topic}, PAYLOAD: {payload}, ERROR MESSAGE: {e}")
+            logger.error(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_monitor_sonar> (ERROR) : ERROR PARSING DATA SENSOR SONAR WITH TOPIC : {topic}, PAYLOAD: {payload}, ERROR MESSAGE: {e}")   
 
     def handle_monitor_max(self, payload):
         """
@@ -227,16 +250,18 @@ class MQTTHandler:
 
         logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <disconnect> SUCCESS : DISCONNECT TO MQTT BROKER")
 
-    def handle_command_buzzer(self, command: bool = True):
+    def handle_command_buzzer(self, command: bool = True, log: bool = True):
         """
         Fungsi yang digunakan untuk melakukan perintah pada buzzer
         """
 
         topic = "lamsia/command/buzzer"
         self.client.publish(topic, str(command))
-        logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_command_buzzer> SUCCESS : SUCCESS COMMAND BUZZER TO {str(command)}")
 
-    def handle_command_led(self, led_id: int, command: bool = True):
+        if log == True:
+            logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_command_buzzer> SUCCESS : SUCCESS COMMAND BUZZER TO {str(command)}")
+
+    def handle_command_led(self, led_id: int, command: bool = True, log: bool = True):
         """
         Fungsi yang digunakan untuk melakukan perintah pada lampu LED yang dapat secara spesifik
         """
@@ -245,9 +270,43 @@ class MQTTHandler:
             
             topic = f"lamsia/command/led/{led_id}"
             self.client.publish(topic, str(command))
-            logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_command_led> SUCCESS : SUCCESS COMMAND LED WITH LED_ID: {led_id} TO {str(command)}")
+
+            if bool == True:
+                logger.info(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_command_led> SUCCESS : SUCCESS COMMAND LED WITH LED_ID: {led_id} TO {str(command)}")
         else:
             logger.error(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} mqtt_handler.py [MQTTHandler] <handle_command_led> ERROR : CAN'T COMMAND LED CAUSE LED_ID IS NOT VALID NUMBER (NULL OR UNDER 0)")
+
+    def handle_command_buzzerbeat(self, command: bool = True):
+        """
+        Fungsi yang digunakan untuk melakukan perintah kepada IoT untuk menjalankan
+        buzzer beep
+        """
+
+        topic = "lamsia/command/buzzerbeat"
+        self.client.publish(topic, str(command))
+
+    def handle_command_lcd(self, lcd_id: int, lcd_text: str):
+        """
+        Fungsi yang digunakan untuk melakukan perintah kepada komponen LCD
+        IoT Untuk menampilkan teks.
+        """
+
+        if lcd_id >= 2:
+            lcd_id = 2
+        elif lcd_id < 2:
+            lcd_id = 1
+
+        topic = f"lamsia/command/lcd/{lcd_id}"
+        self.client.publish(topic, str(lcd_text))
+
+    def handle_command_lcdidle(self, command: bool = True):
+        """
+        Fungsi yang digunakan untuk menjalankan perintah kepada komponen LCD
+        IOT Untuk menampilkan teks idle
+        """
+
+        topic = f"lamsia/command/lcdidle"
+        self.client.publish(topic, str(command))
 
 # Global Instance
 mqtt_handler = None
@@ -266,3 +325,98 @@ def get_mqtt_handler():
     fungsi getter untuk mengambil instance dari mqtt_handler
     """
     return mqtt_handler
+
+def monitor_ambil_obat(jarak: float, sonar_id: int):
+
+    if not ambil_obat_session.aktif:
+        return False
+    
+    if sonar_id != ambil_obat_session.sonar_id:
+        return False
+    
+    else:
+        sekarang = datetime.now()
+
+        if ambil_obat_session.isMinumObat == True and ambil_obat_session.waktu_pemantauan is not None:
+
+            if ambil_obat_session.waktu_pemantauan is not None:
+                
+                durasiObatDiambil = (sekarang - ambil_obat_session.waktu_pemantauan).total_seconds() - 5
+
+                print(f"Diambilah Obat dan obat tidak didalam kotak selama {durasiObatDiambil} detik")
+
+                if (durasiObatDiambil > 30):
+
+                    get_mqtt_handler().handle_command_buzzerbeat(True)
+                    get_mqtt_handler().handle_command_led(sonar_id, True, log= False)
+                    get_mqtt_handler().handle_command_lcd(1, "LETAKKAN KEMBALI")
+                    get_mqtt_handler().handle_command_lcd(2, f"OBAT KE KOTAK  {sonar_id}")  
+
+            if jarak < 6 :
+
+                if ambil_obat_session.waktu_minumobat is None:
+
+                    ambil_obat_session.waktu_minumobat = sekarang
+
+                    print("Mulai Menghitung Mengembalikan Obat 3 detik!")
+
+                else:
+
+                    durasi = (sekarang - ambil_obat_session.waktu_minumobat).total_seconds()
+
+                    print(f"Obat telah diletak dengan lama {durasi} detik")
+
+                    if durasi >= 3:
+
+                        print("Obat Telah dikembalikan")
+
+                        get_mqtt_handler().handle_command_buzzerbeat(False)
+                        get_mqtt_handler().handle_command_led(sonar_id, False, log= False)
+                        get_mqtt_handler().handle_command_lcdidle(True)
+
+                        ambil_obat_session.aktif = False
+                        ambil_obat_session.isMinumObat = False
+                        ambil_obat_session.waktu_pemantauan = None
+                        ambil_obat_session.waktu_minumobat = None
+                        ambil_obat_session.sonar_id = None
+
+                        # Verifikasi Obat telah dikembalikan                   
+            else:             
+
+                ambil_obat_session.waktu_minumobat = None
+
+        elif jarak > 6:
+
+            if ambil_obat_session.waktu_pemantauan is None:
+
+                ambil_obat_session.waktu_pemantauan = sekarang
+
+                print("Mulai menghitung 5 detik")
+
+            else:
+
+                durasi = (sekarang - ambil_obat_session.waktu_pemantauan).total_seconds()
+
+                print(f"Sudah {durasi} obat telah diambil")
+                
+                if durasi >= 5:
+
+                    print("Obat sudah diambil")
+
+                    get_mqtt_handler().handle_command_buzzerbeat(False)
+                    get_mqtt_handler().handle_command_led(sonar_id, False, log= False)
+                    get_mqtt_handler().handle_command_lcdidle(True)
+
+                    # Bagian sini bisa ditambahkan ke data base riwayat konsumsi obat
+
+                    # Melakukan reset session,
+                    # ambil_obat_session.aktif = False
+                    # ambil_obat_session.sonar_id = None
+                    # ambil_obat_session.waktu_pemantauan = None
+
+                    # Update sekarang alat akan menu
+                    ambil_obat_session.isMinumObat = True
+
+        else:
+
+            ambil_obat_session.waktu_pemantauan = None 

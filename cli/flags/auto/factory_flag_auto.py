@@ -105,8 +105,8 @@ class FactoryFlagAuto:
                 if a["type"] == "String":
                     factory_fields += (f'                {a["name"]}="Lorem Ipsum",\n')
                 elif a["type"] == "Integer":
-                    factory_fields += (f'                {a["name"]}=0\n')
+                    factory_fields += (f'                {a["name"]}=0,\n')
                 else:
-                    factory_fields += (f'                {a["name"]}=    # Tipe data {a["type"]}\n')
+                    factory_fields += (f'                {a["name"]}= None,    # Tipe data {a["type"]}\n')
         
         return factory_fields           

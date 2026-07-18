@@ -105,8 +105,8 @@ class SeederFlagAuto:
                 if a["type"] == "String":
                     seeder_fields += (f'                {a["name"]}="Lorem Ipsum",\n')
                 elif a["type"] == "Integer":
-                    seeder_fields += (f'                {a["name"]}=0\n')
+                    seeder_fields += (f'                {a["name"]}=0,\n')
                 else:
-                    seeder_fields += (f'                {a["name"]}=    # Tipe data {a["type"]}\n')
+                    seeder_fields += (f'                {a["name"]}= None,    # Tipe data {a["type"]}\n')
         
         return seeder_fields           

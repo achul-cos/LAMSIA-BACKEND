@@ -33,3 +33,7 @@ class Config:
     SEEDER_PATH = (
         APP_PATH / "seeders"
     )
+
+    FACTORY_PATH = (
+        APP_PATH / "factories"
+    )
