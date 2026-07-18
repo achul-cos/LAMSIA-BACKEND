@@ -5,7 +5,6 @@ from bp_prediction.database_bp import get_ir_data
 from bp_prediction.preprocessing import preprocessing
 from bp_prediction.feature_extraction import extract_features
 
-
 # ======================
 # Load Model
 # ======================

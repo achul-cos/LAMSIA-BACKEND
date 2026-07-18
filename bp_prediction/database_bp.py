@@ -3,7 +3,6 @@ from sqlalchemy import text
 
 from app.core.database import SessionLocal
 
-
 def get_ir_data(limit=2000):
 
     session = SessionLocal()

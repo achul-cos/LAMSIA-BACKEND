@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------
-# history_route.py.py
+# history_route.py
 # ------------------------------------------------------------------
 # Kode ini mendefinisikan fitur-fitur didalam route /histories yang didefinisikan
 # dengan fungsi-fungsi yang diintegrasikan dengan variasi sub-route dan methodnya

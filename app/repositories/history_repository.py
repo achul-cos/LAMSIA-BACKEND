@@ -8,15 +8,25 @@
 # ------------------------------------------------------------------
 from app.core.time import now
 from sqlalchemy.orm import Session
-from datetime import date
+from datetime import date, timedelta
 
 from app.models.history_model import History
+from app.models.schedules_model import Schedule
+from app.models.medicine_model import Medicine
+
 from app.schemas.history_schema import HistoryCreate, HistoryUpdate
-from app.helper.query_parser import QueryParser
+from app.schemas.schedule_view_schema import (
+    DailyScheduleItem,
+    WeeklyScheduleItem,
+    DailyScheduleResponse,
+    WeeklyScheduleResponse,
+    ScheduleViewResponse
+)
 
 from app.core.history_status import HistoryStatus
 
 from sqlalchemy.orm import joinedload
+from app.helper.query_parser import QueryParser
 
 class HistoryRepository:
     """
@@ -188,3 +198,105 @@ class HistoryRepository:
         db.refresh(history)
 
         return history
+
+    @staticmethod
+    def get_daily_schedule(
+        db: Session,
+        selected_date: date
+    ):
+        histories = (
+            db.query(History)
+            .options(
+                joinedload(History.schedule)
+                .joinedload(Schedule.medicine)
+            )
+            .filter(History.date == selected_date)
+            .order_by(History.schedule_id)
+            .all()
+        )
+
+        histories.sort(key=lambda h: h.schedule.time)
+
+        items = []
+
+        for history in histories:
+            schedule = history.schedule
+            medicine = schedule.medicine
+
+            items.append(
+                DailyScheduleItem(
+                    history_id=history.id,
+                    schedule_id=schedule.id,
+                    medicine_id=medicine.id,
+                    medicine_name=medicine.name,
+                    dosage=medicine.dosage,
+                    time=schedule.time,
+                    status=history.status,
+                    taken_at=history.taken_at
+                )
+            )
+
+        return DailyScheduleResponse(
+            date=selected_date,
+            items=items
+        )
+
+    @staticmethod
+    def get_weekly_summary(
+        db: Session,
+        selected_date: date
+    ):
+        start_of_week = selected_date - timedelta(days=selected_date.weekday())
+
+        week = []
+
+        for i in range(7):
+            current_date = start_of_week + timedelta(days=i)
+
+            histories = (
+                db.query(History)
+                .filter(History.date == current_date)
+                .all()
+            )
+
+            total = len(histories)
+
+            taken = sum(
+                1
+                for history in histories 
+                if history.status == HistoryStatus.TAKEN
+            )
+
+            week.append(
+                WeeklyScheduleItem(
+                    date=current_date,
+                    day=current_date.strftime("%a"),
+                    taken=taken,
+                    total=total
+                )
+            )
+
+        return WeeklyScheduleResponse(
+            week=week
+        )
+
+    @staticmethod
+    def get_schedule_view(
+        db: Session,
+        selected_date: date
+    ):
+        week = HistoryRepository.get_weekly_summary(
+            db,
+            selected_date
+        )
+
+        daily = HistoryRepository.get_daily_schedule(
+            db,
+            selected_date
+        )
+
+        return ScheduleViewResponse(
+            selected_date=selected_date,
+            week=week,
+            daily=daily
+        )
