@@ -1,26 +1,7 @@
-from cli.utils.resource_name import ResourceName
-
-class MigrationTemplate:
-    def __init__(self, migration_name: str, migration_number: str=000):
-        self.migration_name = migration_name
-        self.migration_file_end_name = ResourceName(migration_name).migration_file
-        self.migration_file_number = migration_number
-        self.migration_file_name = f"{self.migration_file_number}_{self.migration_file_end_name}"
-        self.migration_model = ResourceName(migration_name).class_name
-        self.migration_table_name = ResourceName(migration_name).table_name
-
-    def build(
-        self, 
-        migration_upgrade:str = (f".id()"),
-        migration_downgrade:str = (f"""\t\t#'atrribute1',\n\t\t#'atrribute2',\n"""),
-        migration_fields:str = (f"        .id(){"\\"}")
-        ):
-        
-        return (
-f'''# ------------------------------------------------------------------
-# {self.migration_file_name}.py
 # ------------------------------------------------------------------
-# Menjalankan migration pada model {self.migration_model} di database.
+# 003_create_riwayatjadwals_table.py
+# ------------------------------------------------------------------
+# Menjalankan migration pada model Riwayatjadwal di database.
 # Migration adalah membuat atau menghapus tabel suatu model.
 # Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
 # model, bersamaan dengan tipe data dan meta data lainya
@@ -37,9 +18,9 @@ def upgrade(engine):
     engine (function) : fungsi creta_engine(database_url) dari modul SQLalchemy
 
     Function Schematic:
-    Schema("<table_name>"){"\\"}
-        .id(){"\\"}
-        .<column_type_data>("<column_name>"){"\\"}
+    Schema("<table_name>")\
+        .id()\
+        .<column_type_data>("<column_name>")\
         ...
     .build(engine)
 
@@ -48,14 +29,17 @@ def upgrade(engine):
     <column_name> (string)          : Nama column akan dibuat
 
     Example:
-    Schema("test_table"){"\\"}
-        .id(){"\\"}
-        .int("atribute_1"){"\\"}
-        .string("atribute_2"){"\\"}
+    Schema("test_table")\
+        .id()\
+        .int("atribute_1")\
+        .string("atribute_2")\
     .build(engine)   
     """
-    Schema("{self.migration_table_name}"){"\\"}
-{migration_fields}
+    Schema("riwayatjadwals")\
+        .id()\
+        .foreign_key('id_jadwal', table='jadwals', column='id', nullable=False)\
+        .datetime('waktu_riwayat', nullable=False)\
+        .timestamps()\
     .build(engine)
 
 def downgrade(engine):
@@ -81,8 +65,13 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    Schema("{self.migration_table_name}").deleteColumns(engine, [
-{migration_downgrade}    ])
+    Schema("riwayatjadwals").deleteColumns(engine, [
+		'id',
+		'id_jadwal',
+		'waktu_riwayat',
+		'created_at',
+		'updated_at',
+    ])
 
     """
     (opsi 2) Menghapus table dari database
@@ -99,4 +88,4 @@ def downgrade(engine):
     Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("{self.migration_table_name}").deleteTable(engine)''')
+    Schema("riwayatjadwals").deleteTable(engine)

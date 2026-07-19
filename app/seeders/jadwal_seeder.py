@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------
-# user_seeder.py
+# jadwal_seeder.py
 # ------------------------------------------------------------------
 # Kode ini menjalankan fungsi seeder. Seeder adalah data yang ditulis
 # secara manual didalam kode ini, lalu dimasukkan kedalam tabel model
@@ -8,10 +8,10 @@
 # ------------------------------------------------------------------
 
 from app.seeders.base_seeder import BaseSeeder
-from app.models.user_model import User
 from app.core.database import SessionLocal
+from app.models.jadwal_model import Jadwal
 
-class UserSeeder(BaseSeeder):
+class JadwalSeeder(BaseSeeder):
 
     """
     Memasukkan data-data yang dibuat pada kode berikut kedalam
@@ -64,20 +64,50 @@ class UserSeeder(BaseSeeder):
     def run(self):
         db = SessionLocal()
 
-        users = [
-            User(
-                username="Achul",
-                telephone="123123",
-                password="achul"
+        jadwals = [
+            Jadwal(
+                id_obat=1,
+                dosis=1,
+                waktu_minum= "09:00:00",
             ),
-            User(
-                username="Steven",
-                telephone="456456",
-                password="steven"
-            )
+            Jadwal(
+                id_obat=1,
+                dosis=1,
+                waktu_minum= "12:00:00",
+            ),
+            Jadwal(
+                id_obat=1,
+                dosis=1,
+                waktu_minum= "18:00:00",
+            ),
+            Jadwal(
+                id_obat=2,
+                dosis=1,
+                waktu_minum= "13:00:00",
+            ),
+            Jadwal(
+                id_obat=2,
+                dosis=1,
+                waktu_minum= "19:00:00",
+            ),            
+            Jadwal(
+                id_obat=3,
+                dosis=1,
+                waktu_minum= "10:00:00",
+            ),
+            Jadwal(
+                id_obat=4,
+                dosis=1,
+                waktu_minum= "14:00:00",
+            ),
+            Jadwal(
+                id_obat=4,
+                dosis=1,
+                waktu_minum= "21:00:00",
+            ),                                            
         ]
 
-        db.add_all(users)
+        db.add_all(jadwals)
         db.commit()
 
-        print("Seeder : UserSeeder excuted")
+        print("Seeder : JadwalSeeder excuted")

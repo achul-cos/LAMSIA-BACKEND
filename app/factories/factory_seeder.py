@@ -1,5 +1,4 @@
 from app.core.database import SessionLocal
-from app.factories.user_factory import UserFactory
 from cli.utils.resource_name import ResourceName
 import importlib
 

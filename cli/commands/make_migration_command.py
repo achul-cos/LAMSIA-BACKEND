@@ -18,9 +18,9 @@ class MakeMigrationCommand:
             print(f"{file[0]} Path : {file[1]}")
     
     def handleAuto(self):
-        generator = MigrationGenerator(self.resource_name, MigrationFlagAuto(self.resource_name).generate_migration_fields())
+        generator = MigrationGenerator(self.resource_name)
 
-        file = generator.generate()
+        file = generator.generateAuto()
 
         if file == False:
             return

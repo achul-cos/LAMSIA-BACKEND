@@ -1,19 +1,19 @@
 # ------------------------------------------------------------------
-# user_schema.py
+# kotakobat_schema.py
 # ------------------------------------------------------------------
-# Kode user_schema.py berfungsi untuk mengatur bagaimana model
-# User dibuat (CREATE) serta melakukan validasi
-# terhadap data yang digunakan untuk membuat objek User.
-# Serta bagaimana objek User ditampilkan datanya (SHOW)
+# Kode kotakobat_schema.py berfungsi untuk mengatur bagaimana model
+# Kotakobat dibuat (CREATE) serta melakukan validasi
+# terhadap data yang digunakan untuk membuat objek Kotakobat.
+# Serta bagaimana objek Kotakobat ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
 
-class UserCreate(BaseModel):
+class KotakobatCreate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin membuat User yang baru.
+    Setiap ingin membuat Kotakobat yang baru.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -31,14 +31,12 @@ class UserCreate(BaseModel):
     password: str
     """
     
-    username: str
-    telephone: str
-    password: str
+    id_obat: int
 
-class UserUpdate(BaseModel):
+class KotakobatUpdate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin mengubah suatu user.
+    Setiap ingin mengubah suatu Kotakobat.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -55,15 +53,13 @@ class UserUpdate(BaseModel):
     birth: datetime
     password: str
     """
+    
+    id_obat: int 
 
-    username: str
-    telephone: str
-    password: str    
-
-class UserResponse(BaseModel):
+class KotakobatResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
-    ingin melihat User.
+    ingin melihat Kotakobat.
 
     Note:
     Penting untuk tidak menampikan data yang bersifat rahasia,
@@ -86,10 +82,9 @@ class UserResponse(BaseModel):
     """
     
     id: int
-    username: str
-    telephone: str
+    id_obat: int
     created_at: datetime
     updated_at: datetime
 
     class Config:
-        from_attribute = True
+        from_attributes = True

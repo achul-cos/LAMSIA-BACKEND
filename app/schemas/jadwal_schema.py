@@ -1,19 +1,22 @@
 # ------------------------------------------------------------------
-# sensormax_schema.py
+# jadwal_schema.py
 # ------------------------------------------------------------------
-# Kode sensormax_schema.py berfungsi untuk mengatur bagaimana model
-# Sensormax dibuat (CREATE) serta melakukan validasi
-# terhadap data yang digunakan untuk membuat objek Sensormax.
-# Serta bagaimana objek Sensormax ditampilkan datanya (SHOW)
+# Kode jadwal_schema.py berfungsi untuk mengatur bagaimana model
+# Jadwal dibuat (CREATE) serta melakukan validasi
+# terhadap data yang digunakan untuk membuat objek Jadwal.
+# Serta bagaimana objek Jadwal ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, time
+from app.schemas.riwayatjadwal_schema import RiwayatjadwalResponse
+from app.schemas.konsumsiobat_schema import KonsumsiobatResponse
+from app.schemas.obat_schema import ObatResponse
 from enum import Enum
 
-class SensormaxCreate(BaseModel):
+class JadwalCreate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin membuat Sensormax yang baru.
+    Setiap ingin membuat Jadwal yang baru.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -31,15 +34,14 @@ class SensormaxCreate(BaseModel):
     password: str
     """
     
-    hr: int
-    sp: int
-    ir: int
-    red: int
+    id_obat: int
+    dosis: int
+    waktu_minum: time
 
-class SensormaxUpdate(BaseModel):
+class JadwalUpdate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin mengubah suatu Sensormax.
+    Setiap ingin mengubah suatu Jadwal.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -57,15 +59,14 @@ class SensormaxUpdate(BaseModel):
     password: str
     """
     
-    hr: int
-    sp: int
-    ir: int
-    red: int 
+    id_obat: int
+    dosis: int
+    waktu_minum: time 
 
-class SensormaxResponse(BaseModel):
+class JadwalResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
-    ingin melihat Sensormax.
+    ingin melihat Jadwal.
 
     Note:
     Penting untuk tidak menampikan data yang bersifat rahasia,
@@ -88,12 +89,18 @@ class SensormaxResponse(BaseModel):
     """
     
     id: int
-    hr: int
-    sp: int
-    ir: int
-    red: int
+    id_obat: int
+    dosis: int
+    waktu_minum: time
+    riwayatjadwals: list[RiwayatJadwalResponseAtJadwal] | None = None
+    obat: ObatResponse | None = None
     created_at: datetime
     updated_at: datetime
 
     class Config:
-        from_attribute = True
+        from_attributes = True
+
+class RiwayatJadwalResponseAtJadwal(RiwayatjadwalResponse):
+    is_terlambat: bool | None = None
+    waktu_terlambat: int | None = None
+    riwayat_konsumsi: list[KonsumsiobatResponse] | None = None

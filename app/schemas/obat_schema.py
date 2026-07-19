@@ -1,19 +1,19 @@
 # ------------------------------------------------------------------
-# sonar_schema.py
+# obat_schema.py
 # ------------------------------------------------------------------
-# Kode sonar_schema.py berfungsi untuk mengatur bagaimana model
-# Sonar dibuat (CREATE) serta melakukan validasi
-# terhadap data yang digunakan untuk membuat objek Sonar.
-# Serta bagaimana objek Sonar ditampilkan datanya (SHOW)
+# Kode obat_schema.py berfungsi untuk mengatur bagaimana model
+# Obat dibuat (CREATE) serta melakukan validasi
+# terhadap data yang digunakan untuk membuat objek Obat.
+# Serta bagaimana objek Obat ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
 
-class SonarCreate(BaseModel):
+class ObatCreate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin membuat Sonar yang baru.
+    Setiap ingin membuat Obat yang baru.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -31,14 +31,13 @@ class SonarCreate(BaseModel):
     password: str
     """
     
-    sonar_id: str
-    jarak: str
-    lebihJauh: str
+    nama_obat: str
+    takaran_obat: str
 
-class SonarUpdate(BaseModel):
+class ObatUpdate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin mengubah suatu Sonar.
+    Setiap ingin mengubah suatu Obat.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -56,14 +55,13 @@ class SonarUpdate(BaseModel):
     password: str
     """
     
-    sonar_id: str
-    jarak: str
-    lebihJauh: str 
+    nama_obat: str
+    takaran_obat: str 
 
-class SonarResponse(BaseModel):
+class ObatResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
-    ingin melihat Sonar.
+    ingin melihat Obat.
 
     Note:
     Penting untuk tidak menampikan data yang bersifat rahasia,
@@ -86,11 +84,10 @@ class SonarResponse(BaseModel):
     """
     
     id: int
-    sonar_id: str
-    jarak: str
-    lebihJauh: str
+    nama_obat: str
+    takaran_obat: str
     created_at: datetime
     updated_at: datetime
 
     class Config:
-        from_attribute = True
+        from_attributes = True

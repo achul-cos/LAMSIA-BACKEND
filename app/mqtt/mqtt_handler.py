@@ -5,8 +5,8 @@ import logging
 from dotenv import load_dotenv
 import os
 import json
-from app.models.sensormax_model import Sensormax
-from app.models.sonar_model import Sonar
+# from app.models.sensormax_model import Sensormax
+# from app.models.sonar_model import Sonar
 from app.core.database import SessionLocal
 
 from app.dataclass.ambil_obat_session import ambil_obat_session

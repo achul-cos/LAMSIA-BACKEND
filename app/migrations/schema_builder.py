@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, DateTime, Boolean, Float, Text, Date, Time, JSON, Enum, text, inspect
+from sqlalchemy import Table, Column, Integer, String, DateTime, Boolean, Float, Text, Date, Time, JSON, Enum, text, inspect, ForeignKey
 from sqlalchemy.dialects.mysql import DOUBLE
 from sqlalchemy.sql import func
 from sqlalchemy.schema import CreateColumn
@@ -89,9 +89,9 @@ class Schema:
         return self
      
     # Datetime
-    def datetime(self, name, default = None, **kwargs):
+    def datetime(self, name, default = None, nullable: bool = True,**kwargs):
         self.columns.append(
-            Column(name, DateTime, default=default, **kwargs)
+            Column(name, DateTime, default=default, nullable=nullable, **kwargs)
         )
         return self
 
@@ -102,6 +102,13 @@ class Schema:
         )
         self.columns.append(
             Column("updated_at", DateTime, default=now())
+        )
+        return self
+    
+    # Foreign key (int)
+    def foreign_key(self, name: str, table: str, column: str = "id", nullable: bool = True):
+        self.columns.append(
+            Column(name, Integer, ForeignKey(f"{table}.{column}"), nullable=nullable)
         )
         return self
 

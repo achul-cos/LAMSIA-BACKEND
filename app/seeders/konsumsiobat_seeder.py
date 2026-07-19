@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------
-# sensormax_seeder.py
+# konsumsiobat_seeder.py
 # ------------------------------------------------------------------
 # Kode ini menjalankan fungsi seeder. Seeder adalah data yang ditulis
 # secara manual didalam kode ini, lalu dimasukkan kedalam tabel model
@@ -8,10 +8,13 @@
 # ------------------------------------------------------------------
 
 from app.seeders.base_seeder import BaseSeeder
-from app.models.sensormax_model import Sensormax
+from app.models.konsumsiobat_model import Konsumsiobat
 from app.core.database import SessionLocal
+from app.repositories.kotakobat_repository import KotakobatRepository
+from datetime import datetime, timedelta
+import random
 
-class SensormaxSeeder(BaseSeeder):
+class KonsumsiobatSeeder(BaseSeeder):
 
     """
     Memasukkan data-data yang dibuat pada kode berikut kedalam
@@ -64,26 +67,47 @@ class SensormaxSeeder(BaseSeeder):
     def run(self):
         db = SessionLocal()
 
-        sensormaxes = [
-            Sensormax(
-                # Isi disini
-                hr=0,
-                sp=0,
-                ir=0,
-                red=0,
+        konsumsiobats = []
 
-            ),
-            Sensormax(
-                # Isi disini
-                hr=0,
-                sp=0,
-                ir=0,
-                red=0,
+        # Mengambil data obat
+        kotakobats = KotakobatRepository().get_all(db=db)
 
-            )
-        ]
+        for kotak in kotakobats:
 
-        db.add_all(sensormaxes)
+            # data obat
+            obat = kotak.obats
+
+            # data jadwal pada obat
+            jadwalobats = obat.jadwals
+
+            # Melakukan iterasi pada setiap jadwal yang dimiliki obat
+            for jadwal in jadwalobats:
+
+                # Data riwayat jadwal
+                riwayatjadwals = jadwal.riwayatjadwals
+
+                # Melakukan iterasi pada setial riwayat jadwal yang dimiliki oleh jadwal
+                for riwayat in riwayatjadwals:
+
+                    # waktu riwayat
+                    waktu_riwayat = riwayat.waktu_riwayat
+
+                    # waktu konsumsi obat
+                    waktu_konsumsi_obat = waktu_riwayat + timedelta(minutes=random.randint(5, 60))
+
+                    # waktu baliki obat
+                    waktu_balikin_obat = waktu_konsumsi_obat + timedelta(minutes=random.randint(3, 10))
+
+                    konsumsiobats.append(
+                        Konsumsiobat(
+                            id_obat = obat.id,
+                            id_kotakobat = kotak.id,
+                            waktu_minum = waktu_konsumsi_obat,
+                            waktu_balikin = waktu_balikin_obat
+                        )
+                    )
+
+        db.add_all(konsumsiobats)
         db.commit()
 
-        print("Seeder : SensormaxSeeder excuted")
+        print("Seeder : KonsumsiobatSeeder excuted")

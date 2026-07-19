@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
-# 020_create_sonars_table.py
+# 005_create_konsumsiobats_table.py
 # ------------------------------------------------------------------
-# Menjalankan migration pada model Sonar di database.
+# Menjalankan migration pada model Konsumsiobat di database.
 # Migration adalah membuat atau menghapus tabel suatu model.
 # Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
 # model, bersamaan dengan tipe data dan meta data lainya
@@ -35,11 +35,12 @@ def upgrade(engine):
         .string("atribute_2")\
     .build(engine)   
     """
-    Schema("sonars")\
+    Schema("konsumsiobats")\
         .id()\
-        .string('sonar_id', length=100, nullable=False)\
-        .string('jarak', length=100, nullable=False)\
-        .string('lebihJauh', length=100, nullable=False)\
+        .foreign_key('id_obat', table='obats', column='id', nullable=False)\
+        .foreign_key('id_kotakobat', table='kotakobats', column='id', nullable=False)\
+        .datetime('waktu_minum', nullable=False)\
+        .datetime('waktu_balikin', nullable=True)\
         .timestamps()\
     .build(engine)
 
@@ -66,9 +67,14 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    Schema("sonars").deleteColumns(engine, [
-        #'atrribute1',
-        #'atribute2',
+    Schema("konsumsiobats").deleteColumns(engine, [
+		'id',
+		'id_obat',
+		'id_kotakobat',
+		'waktu_minum',
+		'waktu_balikin',
+		'created_at',
+		'updated_at',
     ])
 
     """
@@ -86,4 +92,4 @@ def downgrade(engine):
     Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("sonars").deleteTable(engine)
+    Schema("konsumsiobats").deleteTable(engine)

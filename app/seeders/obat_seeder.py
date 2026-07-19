@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------
-# pengasuh_seeder.py
+# obat_seeder.py
 # ------------------------------------------------------------------
 # Kode ini menjalankan fungsi seeder. Seeder adalah data yang ditulis
 # secara manual didalam kode ini, lalu dimasukkan kedalam tabel model
@@ -8,10 +8,10 @@
 # ------------------------------------------------------------------
 
 from app.seeders.base_seeder import BaseSeeder
-from app.models.pengasuh_model import Pengasuh
 from app.core.database import SessionLocal
+from app.models.obat_model import Obat
 
-class PengasuhSeeder(BaseSeeder):
+class ObatSeeder(BaseSeeder):
 
     """
     Memasukkan data-data yang dibuat pada kode berikut kedalam
@@ -64,24 +64,26 @@ class PengasuhSeeder(BaseSeeder):
     def run(self):
         db = SessionLocal()
 
-        pengasuhs = [
-            Pengasuh(
-                # Isi disini
-                name="Lorem Ipsum",
-                telephone="Lorem Ipsum",
-                password="Lorem Ipsum",
-
+        obats = [
+            Obat(
+                nama_obat="Paracetamol",
+                takaran_obat="tablet",
             ),
-            Pengasuh(
-                # Isi disini
-                name="Lorem Ipsum",
-                telephone="Lorem Ipsum",
-                password="Lorem Ipsum",
-
-            )
+            Obat(
+                nama_obat="Ibu Profen",
+                takaran_obat="tablet",
+            ),
+            Obat(
+                nama_obat="Vitamin C",
+                takaran_obat="Kapsul",
+            ),
+            Obat(
+                nama_obat="Episan Sirup",
+                takaran_obat="Sendok Makan",
+            ),           
         ]
 
-        db.add_all(pengasuhs)
+        db.add_all(obats)
         db.commit()
 
-        print("Seeder : PengasuhSeeder excuted")
+        print("Seeder : ObatSeeder excuted")

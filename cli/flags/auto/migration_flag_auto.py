@@ -45,6 +45,7 @@ class MigrationFlagAuto:
                     "secret": "secret" in column.info,
                     "length": (str(column.type).split("(")[-1])[:-1],
                     "nullable": column.nullable,
+                    "foreign_key": column.foreign_keys,
                     "default": (((str(column.default)).split("(", maxsplit=1))[-1])[:-1],
                     "unique": column.unique,
                     "values": getattr(column.type, "enums", None)
@@ -69,6 +70,7 @@ class MigrationFlagAuto:
             if field["primary_key"] == True:
                 migration_fields.append(".id()")
                 continue
+            
 
             length = ""
             nullable = ""
@@ -88,6 +90,16 @@ class MigrationFlagAuto:
 
             if field["nullable"] is not None:
                 nullable = f", nullable={field["nullable"]}"
+
+            if field["foreign_key"] != set():
+
+                nama_tabel, nama_kolom = next(iter(field["foreign_key"])).target_fullname.split(".")
+
+                migration_field = f".foreign_key('{field["name"]}', table='{nama_tabel}', column='{nama_kolom}'{nullable})"
+
+                migration_fields.append(migration_field)
+
+                continue
 
             if field["unique"] is not None:
                 unique = f", unique={field["unique"]}"
@@ -151,6 +163,10 @@ class MigrationFlagAuto:
                     migration_field = f".enum('{field["name"]}'{values}{nullable})"
                     migration_fields.append(migration_field)
 
+                case "Time":
+                    migration_field = f".time('{field["name"]}'{nullable})"
+                    migration_fields.append(migration_field)
+
                 case "DateTime":
                     if field["name"] == 'created_at':
                         migration_field = f".timestamps()"
@@ -160,7 +176,8 @@ class MigrationFlagAuto:
                         continue
 
                     else:
-                        migration_field = f".datetime('{field["name"]}')"
+                        migration_field = f".datetime('{field["name"]}'{default}{nullable})"
+                        migration_fields.append(migration_field)
             
                 case _:
 
@@ -173,3 +190,14 @@ class MigrationFlagAuto:
         # print(migration_fields_result)
 
         return migration_fields_result
+    
+    def generate_downgrade_migration_fields(self):
+
+        model_fields = self.get_model_fields()
+
+        migration_fields = ""
+
+        for field in model_fields:
+            migration_fields += f"""\t\t'{field["name"]}',\n"""
+
+        return migration_fields

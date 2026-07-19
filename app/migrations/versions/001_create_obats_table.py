@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
-# 018_create_users_table.py
+# 001_create_obats_table.py
 # ------------------------------------------------------------------
-# Menjalankan migration pada model User di database.
+# Menjalankan migration pada model Obat di database.
 # Migration adalah membuat atau menghapus tabel suatu model.
 # Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
 # model, bersamaan dengan tipe data dan meta data lainya
@@ -35,11 +35,10 @@ def upgrade(engine):
         .string("atribute_2")\
     .build(engine)   
     """
-    Schema("users")\
+    Schema("obats")\
         .id()\
-        .string('username', length=100, nullable=False)\
-        .string('telephone', length=100, nullable=False)\
-        .string('password', length=255, nullable=False)\
+        .string('nama_obat', nullable=False)\
+        .string('takaran_obat', nullable=False)\
         .timestamps()\
     .build(engine)
 
@@ -66,9 +65,12 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    Schema("users").deleteColumns(engine, [
-        #'atrribute1',
-        #'atribute2',
+    Schema("obats").deleteColumns(engine, [
+		'id',
+		'nama_obat',
+		'takaran_obat',
+		'created_at',
+		'updated_at',
     ])
 
     """
@@ -86,4 +88,4 @@ def downgrade(engine):
     Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("users").deleteTable(engine)
+    Schema("obats").deleteTable(engine)

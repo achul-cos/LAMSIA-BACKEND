@@ -2,12 +2,9 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from datetime import datetime
 from app.mqtt.mqtt_handler import init_mqtt, get_mqtt_handler
-
 from app.dataclass.ambil_obat_session import ambil_obat_session
-
-# Import User route /users
-from app.routes.user_routes import router as user_router
-from app.routes.pengasuh_route import router as pengasuh_router
+from app.helper.routes.register_route import register_route
+import app.models
 
 # Lifecycle event
 # Menjelaskan lifecycle dari aplikasi, dari mulai ON hingga SHUTDOWN
@@ -27,9 +24,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# Mendaftarkan route /users ke aplikasi FastAPI
-app.include_router(user_router)
-app.include_router(pengasuh_router)
+register_route(app)
 
 @app.get("/")
 async def root():

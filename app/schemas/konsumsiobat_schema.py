@@ -1,40 +1,19 @@
-from cli.utils.resource_name import ResourceName
-
-class SchemaTemplate:
-    def __init__(self, schema_name: str):
-        self.schema_name = schema_name
-        self.schema_file_name = ResourceName(self.schema_name).schema_file
-        self.schema_class_name = ResourceName(self.schema_name).class_name
-        self.schema_model_file = ResourceName(self.schema_name).model_file
-        self.schema_model_class_name = ResourceName(self.schema_name).class_name
-        self.schema_column_name = ResourceName(self.schema_name).singular
-
-    def build(
-        self, 
-        schema_create:str = "", 
-        schema_update:str = "",
-        schema_response:str = (f"""
-    id: int
-    created_at: datetime
-    updated_at: datetime"""
-    )):
-        return (
-f'''# ------------------------------------------------------------------
-# {self.schema_file_name}
 # ------------------------------------------------------------------
-# Kode {self.schema_file_name} berfungsi untuk mengatur bagaimana model
-# {self.schema_class_name} dibuat (CREATE) serta melakukan validasi
-# terhadap data yang digunakan untuk membuat objek {self.schema_class_name}.
-# Serta bagaimana objek {self.schema_class_name} ditampilkan datanya (SHOW)
+# konsumsiobat_schema.py
+# ------------------------------------------------------------------
+# Kode konsumsiobat_schema.py berfungsi untuk mengatur bagaimana model
+# Konsumsiobat dibuat (CREATE) serta melakukan validasi
+# terhadap data yang digunakan untuk membuat objek Konsumsiobat.
+# Serta bagaimana objek Konsumsiobat ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
 
-class {self.schema_class_name}Create(BaseModel):
+class KonsumsiobatCreate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin membuat {self.schema_class_name} yang baru.
+    Setiap ingin membuat Konsumsiobat yang baru.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -51,12 +30,15 @@ class {self.schema_class_name}Create(BaseModel):
     birth: datetime
     password: str
     """
-    {schema_create}
+    
+    id_obat: int
+    id_kotakobat: int
+    waktu_minum: datetime
 
-class {self.schema_class_name}Update(BaseModel):
+class KonsumsiobatUpdate(BaseModel):
     """
     Merancang persyaratan data-data yang diberikan pengguna
-    Setiap ingin mengubah suatu {self.schema_class_name}.
+    Setiap ingin mengubah suatu Konsumsiobat.
 
     Class Schematic:
     <column_1>: <column_type_data_1>
@@ -73,12 +55,16 @@ class {self.schema_class_name}Update(BaseModel):
     birth: datetime
     password: str
     """
-    {schema_update} 
+    
+    id_obat: int
+    id_kotakobat: int
+    waktu_minum: datetime
+    waktu_balikin: datetime 
 
-class {self.schema_class_name}Response(BaseModel):
+class KonsumsiobatResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
-    ingin melihat {self.schema_class_name}.
+    ingin melihat Konsumsiobat.
 
     Note:
     Penting untuk tidak menampikan data yang bersifat rahasia,
@@ -99,7 +85,14 @@ class {self.schema_class_name}Response(BaseModel):
     created_at: datetime            # Timestamp data, opsional ditampilkan
     updated_at: datetime            # Timestamp data, opsional ditampilkan
     """
-    {schema_response}
+    
+    id: int
+    id_obat: int
+    id_kotakobat: int
+    waktu_minum: datetime
+    waktu_balikin: datetime
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
-        from_attributes = True''')
+        from_attributes = True

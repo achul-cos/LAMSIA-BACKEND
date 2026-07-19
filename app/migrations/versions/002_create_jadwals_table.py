@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
-# 019_create_sensormaxes_table.py
+# 002_create_jadwals_table.py
 # ------------------------------------------------------------------
-# Menjalankan migration pada model Sensormax di database.
+# Menjalankan migration pada model Jadwal di database.
 # Migration adalah membuat atau menghapus tabel suatu model.
 # Tabel yang dibuat memiliki column-column yang disamakan dengan atribut
 # model, bersamaan dengan tipe data dan meta data lainya
@@ -35,12 +35,11 @@ def upgrade(engine):
         .string("atribute_2")\
     .build(engine)   
     """
-    Schema("sensormaxes")\
+    Schema("jadwals")\
         .id()\
-        .int('hr', nullable=False)\
-        .int('sp', nullable=False)\
-        .int('ir', nullable=False)\
-        .int('red', nullable=False)\
+        .foreign_key('id_obat', table='obats', column='id', nullable=False)\
+        .int('dosis', nullable=False)\
+        .time('waktu_minum', nullable=False)\
         .timestamps()\
     .build(engine)
 
@@ -67,9 +66,13 @@ def downgrade(engine):
         'column_2',
     ])
     """
-    Schema("sensormaxes").deleteColumns(engine, [
-        #'atrribute1',
-        #'atribute2',
+    Schema("jadwals").deleteColumns(engine, [
+		'id',
+		'id_obat',
+		'dosis',
+		'waktu_minum',
+		'created_at',
+		'updated_at',
     ])
 
     """
@@ -87,4 +90,4 @@ def downgrade(engine):
     Schema("test_table").deleteTable(engine)
     """
 
-    # Schema("sensormaxes").deleteTable(engine)
+    Schema("jadwals").deleteTable(engine)
