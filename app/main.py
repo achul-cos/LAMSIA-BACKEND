@@ -6,8 +6,9 @@ from app.scheduler.history_scheduler import start_scheduler
 # Import setiap route yang ada
 from app.routes.user_routes import router as user_router
 from app.routes.medicine_route import router as medicine_router
-from app.routes.pengasuh_route import router as pengasuh_router
 from app.routes.schedules_route import router as schedules_router
+from app.routes.history_route import router as history_router
+from app.routes.pengasuh_route import router as pengasuh_router
 from app.routes.sensorresult_route import router as sensorresult_router
 
 app = FastAPI()
@@ -28,6 +29,7 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(medicine_router)
 app.include_router(schedules_router)
+app.include_router(history_router)
 app.include_router(pengasuh_router)
 app.include_router(sensorresult_router)
 

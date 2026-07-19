@@ -11,6 +11,9 @@ from sqlalchemy.orm import Session
 from datetime import date
 
 from app.models.history_model import History
+from app.models.schedules_model import Schedule
+from app.models.medicine_model import Medicine
+
 from app.schemas.history_schema import HistoryCreate, HistoryUpdate
 from app.helper.query_parser import QueryParser
 
@@ -53,6 +56,31 @@ class HistoryRepository:
     @staticmethod
     def get_by_id(db: Session, history_id: int):
         return(db.query(History).filter(History.id == history_id).first())
+    
+    @staticmethod
+    def get_medication_history(db: Session):
+        histories = (
+            db.query(History)
+            .join(History.schedule)
+            .join(Schedule.medicine)
+            .all()
+        )
+
+        results = []
+
+        for history in histories:
+            results.append({
+                "history_id": history.id,
+                "date": history.date,
+                "time": history.schedule.time.strftime("%H:%M"),
+                "medicine_name": history.schedule.medicine.name,
+                "dosage": history.schedule.medicine.dosage,
+                "form": history.schedule.medicine.form,
+                "status": history.status,
+                "taken_at": history.taken_at
+            })
+
+        return results
     
     @staticmethod
     def update_put(db: Session, history_id: int, history_data: HistoryUpdate):
