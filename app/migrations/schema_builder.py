@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, DateTime, Boolean, Float, Text, Date, Time, JSON, Enum, text, inspect
+from sqlalchemy import Table, Column, Integer, String, DateTime, Boolean, Float, Text, Date, Time, JSON, Enum, text, inspect, MetaData
 from sqlalchemy.dialects.mysql import DOUBLE
 from sqlalchemy.sql import func
 from sqlalchemy.schema import CreateColumn
@@ -110,10 +110,12 @@ class Schema:
         # Memastikan apakah table migrations telah dibuat atau belum
         inspector = inspect(engine)
 
+        migration_metadata = MetaData()
+
         if not inspector.has_table(self.table_name):
             table = Table(
                 self.table_name,
-                Base.metadata,
+                migration_metadata,
                 *self.columns
             )
 
