@@ -102,5 +102,6 @@ class JadwalResponse(BaseModel):
 
 class RiwayatJadwalResponseAtJadwal(RiwayatjadwalResponse):
     is_terlambat: bool | None = None
-    waktu_terlambat: int | None = None
-    riwayat_konsumsi: list[KonsumsiobatResponse] | None = None
+    is_terlewat: bool | None = None
+    waktu_terlambat: float | None = None
+    riwayat_konsumsi: KonsumsiobatResponse | None = None

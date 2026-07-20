@@ -30,8 +30,9 @@ def create_riwayatjadwal(
 def get_riwayatjadwals(
     db: Session = Depends(get_db)
 ):
-    RepositoryResponse = RiwayatjadwalRepository.get_all(db)
-    return RepositoryResponse
+    riwayatjadwal = RiwayatjadwalRepository.get_all(db)
+    
+    return riwayatjadwal
 
 @router.get("/{riwayatjadwal_id:int}", response_model=RiwayatjadwalResponse)
 def get_riwayatjadwal(
