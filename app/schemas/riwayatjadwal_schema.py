@@ -9,6 +9,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
+from app.schemas.konsumsiobat_schema import KonsumsiobatResponse
 
 class RiwayatjadwalCreate(BaseModel):
     """
@@ -91,3 +92,10 @@ class RiwayatjadwalResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class RiwayatjadwalResponseWithKonsumsiObat(RiwayatjadwalResponse):
+    is_terlambat: bool | None = None
+    is_terlewat: bool | None = None
+    waktu_terlambat: float | None = None
+    id_obat: int | None = None
+    riwayat_konsumsi: KonsumsiobatResponse | None = None
