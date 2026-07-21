@@ -6,7 +6,7 @@
 # objek jadwal memiliki atribut apa saja. 
 # ------------------------------------------------------------------
 
-from sqlalchemy import Column, Integer, String, Enum, DateTime, Float, ForeignKey, Time
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Time
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 from app.core.time import now
@@ -28,6 +28,7 @@ class Jadwal(Base):
     id = Column(Integer, primary_key=True, index=True)
     id_obat = Column("id_obat", Integer, ForeignKey("obats.id"), nullable=False)
     dosis = Column("dosis", Integer, nullable=False)
+    pengulangan = Column("pengulangan", String(50), nullable=False)
     waktu_minum = Column("waktu_minum", Time, nullable=False)
     created_at = Column(DateTime(), default=now())
     updated_at = Column(DateTime(), default=now())    

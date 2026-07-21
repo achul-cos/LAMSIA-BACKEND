@@ -8,6 +8,8 @@
 # ------------------------------------------------------------------
 from sqlalchemy.orm import Session
 from app.models.obat_model import Obat
+from app.models.jadwal_model import Jadwal
+from app.models.kotakobat_model import Kotakobat
 from app.schemas.obat_schema import ObatCreate, ObatUpdate
 from app.helper.query_parser import QueryParser
 from app.core.time import now
@@ -22,20 +24,64 @@ class ObatRepository:
     def create(db: Session, obat_data: ObatCreate):
         obat = Obat(
             nama_obat = obat_data.nama_obat,
-            takaran_obat = obat_data.takaran_obat
+            takaran_obat = obat_data.takaran_obat,
         )
         db.add(obat)
+        db.flush()
+
+        kotak = Kotakobat(
+            id_obat=obat.id,
+            kompartemen=obat_data.kompartemen
+        )
+
+        db.add(kotak)
+
+        for jam in obat_data.waktu:
+            jadwal = Jadwal(
+                id_obat=obat.id,
+                dosis=obat_data.dosis,
+                pengulangan=obat_data.pengulangan,
+                waktu_minum=jam
+            )
+            db.add(jadwal)
+
         db.commit()
         db.refresh(obat)
         return obat
-    
     """
+
     fungsi get_all(), yaitu fungsi untuk mengambil seluruh data
     pada tabel obat yang berada pada database.
     """
     @staticmethod
     def get_all(db: Session):
-        return db.query(Obat).all()
+        obats = db.query(Obat).all()
+
+        hasil = []
+
+        for obat in obats:
+
+            kotak = (
+                db.query(Kotakobat)
+                .filter(Kotakobat.id_obat == obat.id)
+                .first()
+            )
+
+            jadwals = (
+                db.query(Jadwal)
+                .filter(Jadwal.id_obat == obat.id)
+                .all()
+            )
+
+            hasil.append({
+                "id": obat.id,
+                "nama_obat": obat.nama_obat,
+                "takaran_obat": obat.takaran_obat,
+                "kompartemen": kotak.kompartemen if kotak else None,
+                "jadwal": jadwals
+            })
+
+        return hasil
 
     @staticmethod
     def get_by_id(db: Session, obat_id: int):

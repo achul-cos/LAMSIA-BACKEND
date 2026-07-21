@@ -6,9 +6,9 @@
 # terhadap data yang digunakan untuk membuat objek Obat.
 # Serta bagaimana objek Obat ditampilkan datanya (SHOW)
 # ------------------------------------------------------------------
-from pydantic import BaseModel
-from datetime import datetime
-from enum import Enum
+from pydantic import BaseModel, field_validator
+from datetime import datetime, time
+from typing import List
 
 class ObatCreate(BaseModel):
     """
@@ -33,6 +33,17 @@ class ObatCreate(BaseModel):
     
     nama_obat: str
     takaran_obat: str
+    dosis: int
+    kompartemen: int
+    pengulangan: str
+    waktu: List[time]
+
+    @field_validator("waktu")
+    @classmethod
+    def validate_times(cls, value):
+        if len(value) == 0:
+            raise ValueError("Minimal harus ada satu jadwal minum.")
+        return value
 
 class ObatUpdate(BaseModel):
     """
@@ -54,9 +65,12 @@ class ObatUpdate(BaseModel):
     birth: datetime
     password: str
     """
-    
+
     nama_obat: str
-    takaran_obat: str 
+    takaran_obat: str
+    dosis: int
+    kompartemen: int
+    pengulangan: str
 
 class ObatResponse(BaseModel):
     """
@@ -88,6 +102,24 @@ class ObatResponse(BaseModel):
     takaran_obat: str
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class JadwalItem(BaseModel):
+    dosis: int
+    pengulangan: str
+    waktu_minum: time
+
+    class Config:
+        from_attributes = True
+
+class ObatListResponse(BaseModel):
+    id: int
+    nama_obat: str
+    takaran_obat: str
+    kompartemen: int
+    jadwal: List[JadwalItem]
 
     class Config:
         from_attributes = True

@@ -6,10 +6,9 @@
 # yang selanjutnya route /obats akan didaftarkan pada main.py
 # ------------------------------------------------------------------
 from fastapi import APIRouter, Depends, Request
-from fastapi import Query
 from sqlalchemy.orm import Session
 
-from app.schemas.obat_schema import ObatCreate, ObatResponse, ObatUpdate
+from app.schemas.obat_schema import ObatCreate, ObatResponse, ObatUpdate, ObatListResponse
 from app.repositories.obat_repository import ObatRepository
 from app.core.dependencies import get_db
 
@@ -26,7 +25,7 @@ def create_obat(
     RepositoryResponse = ObatRepository.create(db, obat_data)
     return RepositoryResponse
 
-@router.get("/", response_model=list[ObatResponse])
+@router.get("/", response_model=list[ObatListResponse])
 def get_obats(
     db: Session = Depends(get_db)
 ):

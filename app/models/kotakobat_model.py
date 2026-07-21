@@ -27,8 +27,9 @@ class Kotakobat(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     id_obat = Column(Integer, ForeignKey("obats.id"), nullable=False)
+    kompartemen = Column(Integer, nullable=False)
     created_at = Column(DateTime(), default=now())
-    updated_at = Column(DateTime(), default=now())
+    updated_at = Column(DateTime(), default=now(), onupdate=now())
 
     obats = relationship("Obat", back_populates="kotakobats")
     konsumsiobats = relationship("Konsumsiobat", back_populates="kotakobats")
