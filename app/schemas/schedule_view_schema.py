@@ -14,7 +14,7 @@ from datetime import date, time, datetime
 # ==============
 
 class DailyScheduleItem(BaseModel):
-    history_id: int
+    history_id: int | None = None
     schedule_id: int
     medicine_id: int
 

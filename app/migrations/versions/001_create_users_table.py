@@ -46,7 +46,7 @@ def upgrade(engine):
 
 def downgrade(engine):
     """
-    (opsi 1) Menghapus column-column pada table database yang telah ada,
+    (opsi 1) Menghapus column-column pada table database yang telah ada,v
 
     Parameters:
     engine (variabel) : fungsi creata_engine(database_url) dari modul SQLalchemy

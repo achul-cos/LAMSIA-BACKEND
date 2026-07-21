@@ -10,11 +10,15 @@ from pydantic import BaseModel, field_validator
 from datetime import datetime, time
 from app.schemas.schedules_schema import SchedulesResponse
 
+class MedicineTime(BaseModel):
+    period: str
+    time: time
+
 class MedicineBase(BaseModel):
     name: str
     dosage: int
     form: str
-    times: list[time]
+    times: list[MedicineTime]
     quantity: int
     kompartemen: int
     repeat: str
@@ -100,10 +104,12 @@ class MedicineResponse(BaseModel):
     quantity: int
     kompartemen: int
     repeat: str
+
+    schedules: list[SchedulesResponse]
+
     created_at: datetime
     updated_at: datetime
 
-    schedules: list[SchedulesResponse]
 
     class Config:
         from_attributes = True

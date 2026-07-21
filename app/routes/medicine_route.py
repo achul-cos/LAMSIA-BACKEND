@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.models.medicine_model import Medicine
 from fastapi import APIRouter, Depends, HTTPException
-from app.schemas.medicine_schema import MedicineCreate, MedicineResponse
+from app.schemas.medicine_schema import MedicineCreate, MedicineUpdate, MedicineResponse
 from app.repositories.medicine_repository import MedicineRepository
 
 router = APIRouter(
@@ -30,6 +30,26 @@ def create_medicine(
 def get_all_medicines(db: Session = Depends(get_db)):
   medicines = db.query(Medicine).all()
   return medicines
+
+@router.put("/{medicine_id}", response_model=MedicineResponse)
+def update_medicine(
+    medicine_id: int,
+    medicine_data: MedicineUpdate,
+    db: Session = Depends(get_db)
+):
+    medicine = MedicineRepository.update_put(
+        db,
+        medicine_id,
+        medicine_data
+    )
+
+    if medicine is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Obat tidak ditemukan"
+        )
+
+    return medicine
 
 @router.delete("/{medicine_id}")
 def delete_medicine(medicine_id: int, db: Session = Depends(get_db)):

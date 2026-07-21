@@ -27,8 +27,10 @@ class DashboardRepository:
         today = now().date()
 
         total_today = (
-            db.query(History)
-            .filter(History.date == today)
+            db.query(Schedule)
+            .filter(
+                Schedule.is_active == True
+            )
             .count()
         )
 
@@ -140,7 +142,7 @@ class DashboardRepository:
 
         adherence = 0
 
-        if total >= 0:
+        if total > 0:
             adherence = round((success / total) * 100)
         
         return {

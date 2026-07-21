@@ -22,12 +22,12 @@ def create_daily_history():
   try:
     schedules = SchedulesRepository.get_all(db)
 
-    current_time = now().time()
+    # current_time = now().time()
     today = now().date()
 
     for schedule in schedules:
-      if current_time < schedule.time:
-        continue
+      # if current_time < schedule.time:
+      #   continue
       
       history = HistoryRepository.get_by_schedule_and_date(
         db=db,

@@ -6,7 +6,7 @@
 # objek schedules memiliki atribut apa saja. 
 # ------------------------------------------------------------------
 
-from sqlalchemy import Column, Integer, Boolean, Time, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Boolean, Time, DateTime, VARCHAR, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 from app.core.time import now
@@ -28,6 +28,7 @@ class Schedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     medicine_id = Column(Integer, ForeignKey("medicines.id"), nullable=False)
     time = Column(Time, nullable=False)
+    period = Column(VARCHAR(20), nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(), default=now)
     updated_at = Column(DateTime(), default=now, onupdate=now)

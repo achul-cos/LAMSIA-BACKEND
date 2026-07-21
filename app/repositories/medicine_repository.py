@@ -34,10 +34,11 @@ class MedicineRepository:
             db.add(medicine)
             db.flush()
 
-            for schedule_time in medicine_data.times:
+            for schedule_data in medicine_data.times:
                 schedule = Schedule(
                     medicine_id=medicine.id,
-                    time=schedule_time
+                    period=schedule_data.period,
+                    time=schedule_data.time
                 )
 
                 db.add(schedule)
@@ -67,16 +68,66 @@ class MedicineRepository:
         if not medicine:
             return None
 
-        else:
-            #medicine.atribute_1 = medicine_data.atribut_1
-            #medicine.atribut_2 = medicine_data.atribut_2
-            #medicine.atribut_3 = medicine_data.atribut_3
-            medicine.updated_at = now()
+        # ==========================
+        # Update data medicine
+        # ==========================
+        medicine.name = medicine_data.name
+        medicine.dosage = medicine_data.dosage
+        medicine.form = medicine_data.form
+        medicine.quantity = medicine_data.quantity
+        medicine.kompartemen = medicine_data.kompartemen
+        medicine.repeat = medicine_data.repeat
+        medicine.updated_at = now()
+
+        # ==========================
+        # Ambil schedule lama
+        # ==========================
+        old_schedules = {
+            schedule.period: schedule
+            for schedule in medicine.schedules
+        }
+
+        # ==========================
+        # Update / Tambah schedule
+        # ==========================
+        for schedule_data in medicine_data.times:
+
+            if schedule_data.period in old_schedules:
+                schedule = old_schedules[schedule_data.period]
+
+                schedule.time = schedule_data.time
+                schedule.is_active = True
+                schedule.updated_at = now()
+
+            else:
+                new_schedule = Schedule(
+                    medicine_id=medicine.id,
+                    period=schedule_data.period,
+                    time=schedule_data.time,
+                    is_active=True
+                )
+
+                db.add(new_schedule)
+
+        # ==========================
+        # Nonaktifkan schedule yang
+        # tidak dikirim frontend
+        # ==========================
+        incoming_periods = {
+            schedule.period
+            for schedule in medicine_data.times
+        }
+
+        for schedule in medicine.schedules:
+            if schedule.period not in incoming_periods:
+                schedule.is_active = False
+                schedule.updated_at = now()
 
         db.commit()
         db.refresh(medicine)
+
         return medicine
-    
+
     @staticmethod
     def update_patch(db: Session, medicine_id:int, payload: dict):
         medicine = db.query(Medicine).filter(Medicine.id == medicine_id).first()

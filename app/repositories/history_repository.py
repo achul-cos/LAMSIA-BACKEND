@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------
 from app.core.time import now
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from datetime import date, timedelta
 
 from app.models.history_model import History
@@ -17,9 +18,7 @@ from app.models.medicine_model import Medicine
 from app.schemas.history_schema import HistoryCreate, HistoryUpdate
 from app.schemas.schedule_view_schema import (
     DailyScheduleItem,
-    WeeklyScheduleItem,
     DailyScheduleResponse,
-    WeeklyScheduleResponse,
     ScheduleViewResponse
 )
 
@@ -204,35 +203,36 @@ class HistoryRepository:
         db: Session,
         selected_date: date
     ):
-        histories = (
-            db.query(History)
-            .options(
-                joinedload(History.schedule)
-                .joinedload(Schedule.medicine)
+        schedules = (
+            db.query(Schedule, History)
+            .join(Schedule.medicine)
+            .outerjoin(
+                History,
+                and_(
+                    History.schedule_id == Schedule.id,
+                    History.date == selected_date
+                )
             )
-            .filter(History.date == selected_date)
-            .order_by(History.schedule_id)
+            .filter(Schedule.is_active == True)
+            .order_by(Schedule.time)
             .all()
         )
 
-        histories.sort(key=lambda h: h.schedule.time)
-
         items = []
 
-        for history in histories:
-            schedule = history.schedule
+        for schedule, history in schedules:
             medicine = schedule.medicine
 
             items.append(
                 DailyScheduleItem(
-                    history_id=history.id,
+                    history_id=history.id if history else None,
                     schedule_id=schedule.id,
                     medicine_id=medicine.id,
                     medicine_name=medicine.name,
                     dosage=medicine.dosage,
                     time=schedule.time,
-                    status=history.status,
-                    taken_at=history.taken_at
+                    status=history.status if history else "pending",
+                    taken_at=history.taken_at if history else None,
                 )
             )
 

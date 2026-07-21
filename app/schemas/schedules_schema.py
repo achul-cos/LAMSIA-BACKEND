@@ -11,6 +11,7 @@ from datetime import datetime, time
 
 class SchedulesBase(BaseModel):
     medicine_id: int
+    period: str
     time: time
     is_active: bool = True
 
@@ -84,6 +85,10 @@ class SchedulesResponse(BaseModel):
     """
     
     id: int
+    period: str
+    time: time
+    is_active: bool
+
     created_at: datetime
     updated_at: datetime
 
