@@ -90,3 +90,16 @@ class HistoryResponse(HistoryBase):
 
     class Config:
         from_attributes = True
+
+class MedicationHistoryResponse(BaseModel):
+    history_id: int
+    date: date
+    time: str
+    medicine_name: str
+    dosage: int
+    form: str
+    status: str
+    taken_at: datetime | None = None
+
+    class Config:
+        from_attributes = True

@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 
 from app.core.dependencies import get_db
 from app.repositories.history_repository import HistoryRepository
-from app.schemas.history_schema import HistoryCreate, HistoryResponse
+from app.schemas.history_schema import HistoryResponse, MedicationHistoryResponse
 
 router = APIRouter(
     prefix="/histories",
@@ -23,6 +23,12 @@ def get_all_histories(
 ):
     RepositoryResponse = HistoryRepository.get_all(db)
     return RepositoryResponse
+
+@router.get("/medication", response_model=list[MedicationHistoryResponse])
+def get_medication_history(
+    db: Session = Depends(get_db)
+): 
+    return HistoryRepository.get_medication_history(db)
 
 @router.get("/{history_id:int}", response_model=HistoryResponse)
 def get_history(
