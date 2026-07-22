@@ -63,6 +63,12 @@ class JadwalUpdate(BaseModel):
     dosis: int
     waktu_minum: time 
 
+class RiwayatJadwalResponseAtJadwal(RiwayatjadwalResponse):
+    is_terlambat: bool | None = None
+    is_terlewat: bool | None = None
+    waktu_terlambat: float | None = None
+    riwayat_konsumsi: KonsumsiobatResponse | None = None
+
 class JadwalResponse(BaseModel):
     """
     Merancangan data yang dapat ditampilkan setiap kali pengguna
@@ -99,9 +105,3 @@ class JadwalResponse(BaseModel):
 
     class Config:
         from_attributes = True
-
-class RiwayatJadwalResponseAtJadwal(RiwayatjadwalResponse):
-    is_terlambat: bool | None = None
-    is_terlewat: bool | None = None
-    waktu_terlambat: float | None = None
-    riwayat_konsumsi: KonsumsiobatResponse | None = None
