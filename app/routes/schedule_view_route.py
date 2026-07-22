@@ -13,7 +13,7 @@ from app.core.dependencies import get_db
 from app.repositories.history_repository import HistoryRepository
 from app.schemas.schedule_view_schema import (
     DailyScheduleResponse,
-    WeeklyScheduleResponse
+    # WeeklyScheduleResponse
 )
 
 router = APIRouter(
@@ -31,12 +31,12 @@ def get_daily_schedule(
         date
     )
 
-@router.get("/weekly", response_model=WeeklyScheduleResponse)
-def get_weekly_schedule(
-    date: date,
-    db: Session = Depends(get_db)
-):
-    return HistoryRepository.get_weekly_summary(
-        db,
-        date
-    )
+# @router.get("/weekly", response_model=WeeklyScheduleResponse)
+# def get_weekly_schedule(
+#     date: date,
+#     db: Session = Depends(get_db)
+# ):
+#     return HistoryRepository.get_weekly_summary(
+#         db,
+#         date
+#     )

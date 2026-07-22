@@ -103,3 +103,23 @@ class MedicationHistoryResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class HistoryChartItem(BaseModel):
+    day: str
+    taken: int
+    late: int
+
+class HistorySummaryItem(BaseModel):
+    date: date
+    taken: int
+    missed: int
+    late: int
+    items: list[MedicationHistoryResponse]
+
+class MedicationChartItem(BaseModel):
+    day: str
+    taken: int
+    late: int
+
+class MedicationChartResponse(BaseModel):
+    data: list[MedicationChartItem]

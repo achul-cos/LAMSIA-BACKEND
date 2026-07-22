@@ -20,6 +20,7 @@ class DailyScheduleItem(BaseModel):
 
     medicine_name: str
     dosage: int
+    kompartemen: int
 
     time: time
     status: str

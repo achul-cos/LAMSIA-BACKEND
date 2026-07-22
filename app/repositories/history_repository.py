@@ -64,11 +64,30 @@ class HistoryRepository:
         return(db.query(History).filter(History.id == history_id).first())
     
     @staticmethod
-    def get_medication_history(db: Session):
+    def get_medication_history(
+        db: Session,
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ):
         histories = (
             db.query(History)
             .join(History.schedule)
             .join(Schedule.medicine)
+            .filter(History.status != HistoryStatus.PENDING)
+        )
+
+        if start_date:
+            histories = histories.filter(History.date >= start_date)
+
+        if end_date:
+            histories = histories.filter(History.date <= end_date)
+
+        histories = (
+            histories
+            .order_by(
+                History.date.desc(),
+                Schedule.time.asc()
+            )
             .all()
         )
 
@@ -78,7 +97,7 @@ class HistoryRepository:
             results.append({
                 "history_id": history.id,
                 "date": history.date,
-                "time": history.schedule.time.strftime("%H:%M"),
+                "time": history.schedule.time.strftime("%I:%M %p"),
                 "medicine_name": history.schedule.medicine.name,
                 "dosage": history.schedule.medicine.dosage,
                 "form": history.schedule.medicine.form,
@@ -87,7 +106,7 @@ class HistoryRepository:
             })
 
         return results
-    
+
     @staticmethod
     def update_put(db: Session, history_id: int, history_data: HistoryUpdate):
         history = db.query(History).filter(History.id == history_id).first()
@@ -255,6 +274,7 @@ class HistoryRepository:
                     medicine_id=medicine.id,
                     medicine_name=medicine.name,
                     dosage=medicine.dosage,
+                    kompartemen=medicine.kompartemen,
                     time=schedule.time,
                     status=history.status if history else "pending",
                     taken_at=history.taken_at if history else None,
@@ -266,44 +286,44 @@ class HistoryRepository:
             items=items
         )
 
-    @staticmethod
-    def get_weekly_summary(
-        db: Session,
-        selected_date: date
-    ):
-        start_of_week = selected_date - timedelta(days=selected_date.weekday())
+    # @staticmethod
+    # def get_weekly_summary(
+    #     db: Session,
+    #     selected_date: date
+    # ):
+    #     start_of_week = selected_date - timedelta(days=selected_date.weekday())
 
-        week = []
+    #     week = []
 
-        for i in range(7):
-            current_date = start_of_week + timedelta(days=i)
+    #     for i in range(7):
+    #         current_date = start_of_week + timedelta(days=i)
 
-            histories = (
-                db.query(History)
-                .filter(History.date == current_date)
-                .all()
-            )
+    #         histories = (
+    #             db.query(History)
+    #             .filter(History.date == current_date)
+    #             .all()
+    #         )
 
-            total = len(histories)
+    #         total = len(histories)
 
-            taken = sum(
-                1
-                for history in histories 
-                if history.status == HistoryStatus.TAKEN
-            )
+    #         taken = sum(
+    #             1
+    #             for history in histories 
+    #             if history.status == HistoryStatus.TAKEN
+    #         )
 
-            week.append(
-                WeeklyScheduleItem(
-                    date=current_date,
-                    day=current_date.strftime("%a"),
-                    taken=taken,
-                    total=total
-                )
-            )
+    #         week.append(
+    #             WeeklyScheduleItem(
+    #                 date=current_date,
+    #                 day=current_date.strftime("%a"),
+    #                 taken=taken,
+    #                 total=total
+    #             )
+    #         )
 
-        return WeeklyScheduleResponse(
-            week=week
-        )
+    #     return WeeklyScheduleResponse(
+    #         week=week
+    #     )
 
     @staticmethod
     def get_schedule_view(
@@ -325,3 +345,61 @@ class HistoryRepository:
             week=week,
             daily=daily
         )
+
+    # @staticmethod
+    # def get_history_summary(db: Session):
+
+    @staticmethod
+    def get_medication_chart(
+        db: Session,
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ):
+        if end_date is None:
+            end_date = date.today()
+
+        if start_date is None:
+            start_date = end_date - timedelta(days=6)
+
+        histories = (
+            db.query(History)
+            .filter(
+                History.date >= start_date,
+                History.date <= end_date
+            )
+            .all()
+        )
+
+        chart = []
+
+        current_date = start_date
+
+        while current_date <= end_date:
+
+            daily_histories = [
+                history
+                for history in histories
+                if history.date == current_date
+            ]
+
+            taken = sum(
+                1
+                for history in daily_histories
+                if history.status == HistoryStatus.TAKEN
+            )
+
+            late = sum(
+                1
+                for history in daily_histories
+                if history.status == HistoryStatus.LATE
+            )
+
+            chart.append({
+                "day": current_date.strftime("%a"),
+                "taken": taken,
+                "late": late
+            })
+
+            current_date += timedelta(days=1)
+
+        return chart

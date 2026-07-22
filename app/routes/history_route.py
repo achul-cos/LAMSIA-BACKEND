@@ -6,11 +6,12 @@
 # yang selanjutnya route /histories akan didaftarkan pada main.py
 # ------------------------------------------------------------------
 from sqlalchemy.orm import Session
+from datetime import date
 from fastapi import APIRouter, Depends, Request, HTTPException
 
 from app.core.dependencies import get_db
 from app.repositories.history_repository import HistoryRepository
-from app.schemas.history_schema import HistoryResponse, MedicationHistoryResponse
+from app.schemas.history_schema import HistoryResponse, MedicationHistoryResponse, MedicationChartResponse, HistorySummaryItem
 
 router = APIRouter(
     prefix="/histories",
@@ -26,9 +27,40 @@ def get_all_histories(
 
 @router.get("/medication", response_model=list[MedicationHistoryResponse])
 def get_medication_history(
+    start_date: date | None = None,
+    end_date: date | None = None,
+    db: Session = Depends(get_db),
+):
+    return HistoryRepository.get_medication_history(
+        db,
+        start_date,
+        end_date,
+    )
+
+@router.get("/medication/chart", response_model=MedicationChartResponse)
+def get_medication_chart(
+    start_date: date | None = None,
+    end_date: date | None = None,
     db: Session = Depends(get_db)
-): 
-    return HistoryRepository.get_medication_history(db)
+):
+    data = HistoryRepository.get_medication_chart(
+        db,
+        start_date,
+        end_date
+    )
+
+    return {
+        "data": data
+    }
+
+@router.get(
+    "/summary",
+    response_model=list[HistorySummaryItem]
+)
+def get_history_summary(
+    db: Session = Depends(get_db)
+):
+    return HistoryRepository.get_history_summary(db)
 
 @router.get("/{history_id:int}", response_model=HistoryResponse)
 def get_history(
