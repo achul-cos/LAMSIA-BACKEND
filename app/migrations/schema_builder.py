@@ -89,9 +89,9 @@ class Schema:
         return self
      
     # Datetime
-    def datetime(self, name, default = None, **kwargs):
+    def datetime(self, name, default = None, nullable: bool = True, **kwargs):
         self.columns.append(
-            Column(name, DateTime, default=default, **kwargs)
+            Column(name, DateTime, nullable=nullable, default=default, **kwargs)
         )
         return self
 

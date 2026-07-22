@@ -7,6 +7,7 @@ import os
 import json
 # from app.models.sensormax_model import Sensormax
 # from app.models.sonar_model import Sonar
+from app.models.riwayatkonsumsiobat_model import Riwayatkonsumsiobat
 from app.core.database import SessionLocal
 
 from app.dataclass.ambil_obat_session import ambil_obat_session
@@ -374,6 +375,17 @@ def monitor_ambil_obat(jarak: float, sonar_id: int):
                         get_mqtt_handler().handle_command_led(sonar_id, False, log= False)
                         get_mqtt_handler().handle_command_lcdidle(True)
 
+                        # Menambahkan riwayat konsumsi obat ke data base
+                        riwayatKonsumsiObat = Riwayatkonsumsiobat(
+                            kompartemen = ambil_obat_session.sonar_id,
+                            waktu_minum = ambil_obat_session.waktu_minumobat,
+                            waktu_balikin = sekarang
+                        )
+
+                        db = SessionLocal()
+                        db.add(riwayatKonsumsiObat)
+                        db.commit()
+
                         ambil_obat_session.aktif = False
                         ambil_obat_session.isMinumObat = False
                         ambil_obat_session.waktu_pemantauan = None
@@ -408,6 +420,11 @@ def monitor_ambil_obat(jarak: float, sonar_id: int):
                     get_mqtt_handler().handle_command_lcdidle(True)
 
                     # Bagian sini bisa ditambahkan ke data base riwayat konsumsi obat
+                    db = SessionLocal()
+                    riwayatKonsumsiObat(
+
+                    )
+
 
                     # Melakukan reset session,
                     # ambil_obat_session.aktif = False
