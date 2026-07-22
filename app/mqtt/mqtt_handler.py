@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 class MQTTHandler:
-    def __init__(self, broker_host, broker_port):
-        self.broker_host = broker_host or os.getenv("BROKER_HOST") or "localhost"
-        self.broker_port = broker_port or os.getenv("BROKER_PORT") or 1833
+    def __init__(self):
+        self.broker_host = os.getenv("BROKER_HOST") or "localhost"
+        self.broker_port = int(os.getenv("BROKER_PORT", 1883))
         self.client = mqtt.Client()
 
         self.client.on_connect = self.on_connect
@@ -317,7 +317,7 @@ def init_mqtt():
     """
 
     global mqtt_handler
-    mqtt_handler = MQTTHandler(broker_host="localhost", broker_port=1883)
+    mqtt_handler = MQTTHandler()
     mqtt_handler.connect()
 
 def get_mqtt_handler():
