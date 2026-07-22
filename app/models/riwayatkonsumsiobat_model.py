@@ -30,4 +30,3 @@ class Riwayatkonsumsiobat(Base):
     waktu_balikin = Column(DateTime(), nullable=True)
     created_at = Column(DateTime(), default=now())
     updated_at = Column(DateTime(), default=now())    
-            
